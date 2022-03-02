@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sTrade_list</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <table class="table table-bordered">
+	<tr>
+		<th style="width: 10px">{{sTrades}}</th><th>현재가</th><th>거래량</th>
+	</tr>
+	<tbody id="tbody">
+	{% for sTrade in sTrades %}
+	<tr id="" trCode="{{sTrade.code}}" onclick="detail_order(this)">
+		<td>{{sTrade.code}}</td>
+		<td>{{sTrade.price}}</td>
+		<td>{{sTrade.quan}}</td>
+	</tr>
+    {% endfor %}
+	</tbody>
+</table>
+
+<script>
+	function detail_order(e){
+		console.log( $(e).attr('trCode'));
+	}
+
+</script>
+</body>
+</html>
