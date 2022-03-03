@@ -6,9 +6,6 @@ urlpatterns = [
     # http://127.0.0.1:8000/trade/index
     path('index/', views.index, name='index'),
     path('', views.sTrade_list),
-
     path('sTrade_list/', views.sTrade_list, name='sTrade_list'),
-
-
-
+    path('detail_order/', views.detail_order, name='detail_order'),
 ]

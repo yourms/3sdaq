@@ -6,6 +6,7 @@ class Comp(models.Model):
     name  = models.CharField(max_length=500)
     type  = models.CharField(max_length=100)
     vol   = models.IntegerField(default=100)
+    d_1price = models.IntegerField(default=0)
     regdate = models.DateTimeField(auto_now=True)
 
 class Order(models.Model):
