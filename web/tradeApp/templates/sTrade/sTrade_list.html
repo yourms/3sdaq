@@ -27,12 +27,12 @@
 			</thead>
 			<tbody id="tbody">
 				{% for sTrade in sTrades %}
-				<tr id="now_sTrade_{{forloop.counter0}}" trCode="{{sTrade.code}}" onclick="detail_order(this)" border = "1px" style='text-align: center;'>
-					<td width="100" id="td_sTrade_name_{{forloop.counter0}}">{{sTrade.name}}</td>
-					<td width="100" id="td_sTrade_price_{{forloop.counter0}}">getComma({{sTrade.price}})</td>
-					<td width="100" id="td_sTrade_d_1price_{{forloop.counter0}}">getComma({{sTrade.d_1price}})</td>
-					<td width="100" id="td_sTrade_change_{{forloop.counter0}}">getComma({{sTrade.change}})</td>
-					<td width="100" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
+				<tr id="now_sTrade_{{forloop.counter0}}" copyId="now_sTrade_{{forloop.counter0}}" trCode="{{sTrade.code}}" onclick="detail_order(this)" border = "1px" style='text-align: center;'>
+					<td width="100" name="name" id="td_sTrade_name_{{forloop.counter0}}">{{sTrade.name}}</td>
+					<td width="100" name="price" id="td_sTrade_price_{{forloop.counter0}}">getComma({{sTrade.price}})</td>
+					<td width="100" name="d_1price" id="td_sTrade_d_1price_{{forloop.counter0}}">getComma({{sTrade.d_1price}})</td>
+					<td width="100" name="change" id="td_sTrade_change_{{forloop.counter0}}">getComma({{sTrade.change}})</td>
+					<td width="100" name="ch_rate" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -77,6 +77,8 @@
 <script>
 function detail_order(e){
 	console.log( $(e).attr('trCode'));
+	caller_Id = $(e).attr('copyId');
+	console.log( "caller_Id : " + caller_Id);
 	$.ajax({
 		url : '../detail_order/',
 		type : 'POST',
@@ -100,7 +102,7 @@ function detail_order(e){
 			txt += "<tbody>"
 			$.each(obj, function(idx, data){
 				count = true;
-				txt += "<tr dcode="+data.code+ " dname="+data.name+" dprice="+data.price+" dquan="+data.quan+" onclick=trade_preOrder(this)>"
+				txt += "<tr copyId="+caller_Id+" trCode="+data.code+ " dcode="+data.code+ " dname="+data.name+" dprice="+data.price+" dquan="+data.quan+" onclick=trade_preOrder(this)>"
 				txt += "<td width='100px' style='text-align: center;'>"+data.name+"</td>"
 				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.price)+"</td>"
 				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.quan)+"</td>"
@@ -111,7 +113,7 @@ function detail_order(e){
 			txt += "</td>"
 			txt += "</tr>"
 			if(count == true){
-				$(e).after(txt)
+				$('#'+caller_Id).after(txt)
 			}
 
 		},
@@ -121,9 +123,6 @@ function detail_order(e){
 		}
 	});
 
-}
-function jusuk(str){
-	alert(str)
 }
 function trade_preOrder(obj){
 
@@ -177,6 +176,20 @@ function clearFormatNum(num) {
 	if (num=="") return num;
 	return String(num).replaceAll(",","");
 }
+function updatesDetail() {
+	if ( $( "#now_detail" ).length ) {
+		detail_order($('#detail_order > tbody > tr'));
+	}
+}
+function formCheckNowPrice(){
+	if ($("#sTrade_Form_dprice").text() != "" ) {
+
+		dcode = $("#sTrade_Form_dcode").val();
+		price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
+		//price = $("#tbody > tr[trcode = '1'] > td[name='price']").text();
+		$("#sTrade_Form_dprice").text(price);
+	}
+}
 
 </script>
 <script>
@@ -186,7 +199,8 @@ $(document).ready(function(){
 		alert("^^")
 	});
 	updatesTrade();
-
+	setInterval("updatesDetail()", 3000);
+	setInterval("formCheckNowPrice()", 1000);
 
 
 })

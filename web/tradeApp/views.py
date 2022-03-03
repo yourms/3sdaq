@@ -21,9 +21,6 @@ def index(request):
 def sTrade_list(request):
     print(">>>> sTrade_list")
     typeST = request.POST.get('typeST', '')
-    print("typeST : ", typeST)
-
-    #sTrade = Order.objects.all().order_by('-id')
     market_price = query_market_price()
     #my_query = query_db(query_txt)
     #sTrade = json.dumps(my_query)
@@ -46,8 +43,6 @@ def detail_order(request):
     my_query = query_detail_order(code)
     print(my_query)
     jsonAry = []
-    for value in my_query:
-        print("value", value['code'])
 
     for value in my_query:
         jsonAry.append({
