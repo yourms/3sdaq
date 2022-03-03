@@ -4,59 +4,74 @@
     <meta charset="UTF-8">
     <title>sTrade_list</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<style>
+		#first {
+		width:48%;
+		float: left;
+
+		}
+		#second {
+		width: 48%;
+		float: left;
+		}
+</style>
 
 </head>
 <body>
-    <table class="table table-bordered" width="600px" border="1px">
-		<thead>
-			<tr>
-				<th style="width: 10px">종목</th><th>현재가</th><th>전일가</th><th>전일대비</th><th>변동율</th>
-			</tr>
-		</thead>
-		<tbody id="tbody">
-			{% for sTrade in sTrades %}
-			<tr id="now_sTrade_{{forloop.counter0}}" trCode="{{sTrade.code}}" onclick="detail_order(this)" border = "1px" style='text-align: center;'>
-				<td width="100" id="td_sTrade_name_{{forloop.counter0}}">{{sTrade.name}}</td>
-				<td width="100" id="td_sTrade_price_{{forloop.counter0}}">{{sTrade.price}}</td>
-				<td width="100" id="td_sTrade_d_1price_{{forloop.counter0}}">{{sTrade.d_1price}}</td>
-				<td width="100" id="td_sTrade_change_{{forloop.counter0}}">{{sTrade.change}}</td>
-				<td width="100" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
-			</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-	<table class="table table-bordered" width="300px" border="1px" style='text-align: center;'>
-		<thead>
-			<tr>
-				<th id="sTrade_Form_th1" style="">매수</th><th id="sTrade_Form_th2">매도</th>
-			</tr>
-		</thead>
-		<tbody id="tbody2">
-			<tr>
-				<td width="100" >종목</td>
-				<td width="100" id="sTrade_Form_dname"></td>
-			</tr>
-			<tr>
-				<td width="100" >현재가</td>
-				<td width="100" id="sTrade_Form_dprice"></td>
-			</tr>
-			<tr>
-				<td width="100" >매수가</td>
-				<td width="100"><input type="text" id="sTrade_Form_wprice" value="" style="text-align: center;"></td>
-			</tr>
-			<tr>
-				<td width="100" >수량</td>
-				<td width="100">
-					<input type="text" id="sTrade_Form_dquan" value="" style="text-align: center;">
-				</td>
-			</tr>
-			<tr>
-				<td width="100" colspan='2'><button id="bsBtn" type="button" onclick="openCity('Oslo', this, 'orange')">매수</button>
-					<input type="text" id="sTrade_Form_dcode" value="" style="visibility:hidden;width: 0px;">
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div id="first" style="margin-top: 30px;">
+		<table class="table table-bordered" width="600px" border="1px" align="center">
+			<thead>
+				<tr>
+					<th style="width: 10px">종목</th><th>현재가</th><th>전일가</th><th>전일대비</th><th>변동율</th>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+				{% for sTrade in sTrades %}
+				<tr id="now_sTrade_{{forloop.counter0}}" trCode="{{sTrade.code}}" onclick="detail_order(this)" border = "1px" style='text-align: center;'>
+					<td width="100" id="td_sTrade_name_{{forloop.counter0}}">{{sTrade.name}}</td>
+					<td width="100" id="td_sTrade_price_{{forloop.counter0}}">getComma({{sTrade.price}})</td>
+					<td width="100" id="td_sTrade_d_1price_{{forloop.counter0}}">getComma({{sTrade.d_1price}})</td>
+					<td width="100" id="td_sTrade_change_{{forloop.counter0}}">getComma({{sTrade.change}})</td>
+					<td width="100" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<div id="second" style="margin-top: 30px;">
+		<table class="table table-bordered" width="300px" border="1px" style='text-align: center;' align="center">
+			<thead>
+				<tr>
+					<th id="sTrade_Form_th1" style="">매수</th><th id="sTrade_Form_th2">매도</th>
+				</tr>
+			</thead>
+			<tbody id="tbody2">
+				<tr>
+					<td width="100" >종목</td>
+					<td width="100" id="sTrade_Form_dname"></td>
+				</tr>
+				<tr>
+					<td width="100" >현재가</td>
+					<td width="100" id="sTrade_Form_dprice"></td>
+				</tr>
+				<tr>
+					<td width="100" >매수가</td>
+					<td width="100"><input type="text" id="sTrade_Form_wprice" value="" style="text-align: center;"></td>
+				</tr>
+				<tr>
+					<td width="100" >수량</td>
+					<td width="100">
+						<input type="text" id="sTrade_Form_dquan" value="" style="text-align: center;">
+					</td>
+				</tr>
+				<tr>
+					<td width="100" colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
+						<input type="text" id="sTrade_Form_dcode" value="" style="visibility:hidden;width: 0px;">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 
 <script>
@@ -76,21 +91,19 @@ function detail_order(e){
 			var txt = "";
 			txt += "<tr id='now_detail'>"
 			txt += "<td colspan='5'>"
-			txt += "<table id='detail_order' class='table table-bordered' border='1px' width='500px'>"
+			txt += "<table id='detail_order' class='table table-bordered' border='1px' width='350px' align='center'>"
 			txt += "<thead>"
 			txt += "<tr>"
-			txt += "<th></th><th></th><th></th><th>호가</th><th>수량</th>"
+			txt += "<th></th><th>호가</th><th>수량</th>"
 			txt += "</tr>"
 			txt += "</thead>"
 			txt += "<tbody>"
 			$.each(obj, function(idx, data){
 				count = true;
 				txt += "<tr dcode="+data.code+ " dname="+data.name+" dprice="+data.price+" dquan="+data.quan+" onclick=trade_preOrder(this)>"
-				txt += "<td width='50'></td>"
-				txt += "<td width='50'></td>"
-				txt += "<td width='100' style='text-align: center;'>"+data.name+"</td>"
-				txt += "<td width='100' style='text-align: center;'>"+data.price+"</td>"
-				txt += "<td width='100' style='text-align: center;'>"+data.quan+"</td>"
+				txt += "<td width='100px' style='text-align: center;'>"+data.name+"</td>"
+				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.price)+"</td>"
+				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.quan)+"</td>"
 				txt += "</tr>"
 			});
 			txt += "</tbody>"
@@ -116,7 +129,7 @@ function trade_preOrder(obj){
 
 	var dcode = $(obj).attr('dcode');
 	var dname = $(obj).attr('dname');
-	var dprice = $(obj).attr('dprice');
+	var dprice = getComma($(obj).attr('dprice'));
 	var dquan = $(obj).attr('dquan');
 	$('#sTrade_Form_dname').text(dname);
 	$('#sTrade_Form_dprice').text(dprice);
@@ -140,9 +153,9 @@ function updatesTrade(){
 		success: function(obj){
 			$.each(obj, function(idx, data){
 				$('#td_sTrade_name_'+idx).text(data.name);
-				$('#td_sTrade_price_'+idx).text(data.price);
-				$('#td_sTrade_d_1price_'+idx).text(data.d_1price);
-				$('#td_sTrade_change_'+idx).text(data.change);
+				$('#td_sTrade_price_'+idx).text(getComma(data.price));
+				$('#td_sTrade_d_1price_'+idx).text(getComma(data.d_1price));
+				$('#td_sTrade_change_'+idx).text(getComma(data.change));
 				$('#td_sTrade_ch_rate_'+idx).text(data.rate);
 			});
 		},
@@ -152,6 +165,17 @@ function updatesTrade(){
 		}
 	});
 	timerID = setTimeout("updatesTrade()", 5000); // 5초 단위로 갱신 처리
+}
+function getComma(n) {
+	var reg = /(^[+-]?\d+)(\d{3})/;
+	n += '';
+	while (reg.test(n))
+		n = n.replace(reg, '$1' + ',' + '$2');
+	return n;
+}
+function clearFormatNum(num) {
+	if (num=="") return num;
+	return String(num).replaceAll(",","");
 }
 
 </script>
