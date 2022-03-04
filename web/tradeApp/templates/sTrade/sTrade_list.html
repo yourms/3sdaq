@@ -29,9 +29,9 @@
 				{% for sTrade in sTrades %}
 				<tr id="now_sTrade_{{forloop.counter0}}" copyId="now_sTrade_{{forloop.counter0}}" trCode="{{sTrade.code}}" onclick="detail_order(this)" border = "1px" style='text-align: center;'>
 					<td width="100" name="name" id="td_sTrade_name_{{forloop.counter0}}">{{sTrade.name}}</td>
-					<td width="100" name="price" id="td_sTrade_price_{{forloop.counter0}}">getComma({{sTrade.price}})</td>
-					<td width="100" name="d_1price" id="td_sTrade_d_1price_{{forloop.counter0}}">getComma({{sTrade.d_1price}})</td>
-					<td width="100" name="change" id="td_sTrade_change_{{forloop.counter0}}">getComma({{sTrade.change}})</td>
+					<td width="100" name="price" id="td_sTrade_price_{{forloop.counter0}}">{{sTrade.price}}</td>
+					<td width="100" name="d_1price" id="td_sTrade_d_1price_{{forloop.counter0}}">{{sTrade.d_1price}}</td>
+					<td width="100" name="change" id="td_sTrade_change_{{forloop.counter0}}">{{sTrade.change}}</td>
 					<td width="100" name="ch_rate" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
 				</tr>
 				{% endfor %}
@@ -55,7 +55,7 @@
 					<td width="100" id="sTrade_Form_dprice"></td>
 				</tr>
 				<tr>
-					<td width="100" >매수가</td>
+					<td width="100" id="sTrade_Form_wprice_txt" >매수가</td>
 					<td width="100"><input type="text" id="sTrade_Form_wprice" value="" style="text-align: center;"></td>
 				</tr>
 				<tr>
@@ -67,6 +67,7 @@
 				<tr>
 					<td width="100" colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
 						<input type="text" id="sTrade_Form_dcode" value="" style="visibility:hidden;width: 0px;">
+						<input type="text" id="sTrade_Form_gubun" value="" style="visibility:hidden;width: 0px;">
 					</td>
 				</tr>
 			</tbody>
@@ -102,7 +103,7 @@ function detail_order(e){
 			txt += "<tbody>"
 			$.each(obj, function(idx, data){
 				count = true;
-				txt += "<tr copyId="+caller_Id+" trCode="+data.code+ " dcode="+data.code+ " dname="+data.name+" dprice="+data.price+" dquan="+data.quan+" onclick=trade_preOrder(this)>"
+				txt += "<tr copyId="+caller_Id+" trgubun="+data.gubun+" trCode="+data.code+ " dcode="+data.code+ " dname="+data.name+" dprice="+data.price+" dquan="+data.quan+" onclick=trade_preOrder(this)>"
 				txt += "<td width='100px' style='text-align: center;'>"+data.name+"</td>"
 				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.price)+"</td>"
 				txt += "<td width='100px' style='text-align: center;'>"+getComma(data.quan)+"</td>"
@@ -113,7 +114,9 @@ function detail_order(e){
 			txt += "</td>"
 			txt += "</tr>"
 			if(count == true){
-				$('#'+caller_Id).after(txt)
+				$('#'+caller_Id).after(txt);
+				$('#detail_order > tbody > tr[trgubun="S"]').css("background-color","#A8C8F9");
+				$('#detail_order > tbody > tr[trgubun="B"]').css("background-color","#FC9EBD");
 			}
 
 		},
@@ -130,17 +133,18 @@ function trade_preOrder(obj){
 	var dname = $(obj).attr('dname');
 	var dprice = getComma($(obj).attr('dprice'));
 	var dquan = $(obj).attr('dquan');
+	var price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
+
 	$('#sTrade_Form_dname').text(dname);
-	$('#sTrade_Form_dprice').text(dprice);
+	$('#sTrade_Form_dprice').text(price);
 	$('#sTrade_Form_wprice').val(dprice);
 	$('#sTrade_Form_dquan').val(dquan);
 	$('#sTrade_Form_dcode').val(dcode);
+	$('#sTrade_Form_gubun').val('B');
 	$('#bsBtn').text("매수");
-	$('#bsBtn').css("background-color","#f44336");
-	$('#sTrade_Form_th1').css("background-color","#f44336");
-
-
-
+	$('#bsBtn').css("background-color","#FC9EBD");
+	$('#sTrade_Form_th1').css("background-color","#FC9EBD");
+	$('#sTrade_Form_th2').css("background-color","#CFC3B5");
 }
 function updatesTrade(){
 	$.ajax({
@@ -155,7 +159,7 @@ function updatesTrade(){
 				$('#td_sTrade_price_'+idx).text(getComma(data.price));
 				$('#td_sTrade_d_1price_'+idx).text(getComma(data.d_1price));
 				$('#td_sTrade_change_'+idx).text(getComma(data.change));
-				$('#td_sTrade_ch_rate_'+idx).text(data.rate);
+				$('#td_sTrade_ch_rate_'+idx).text(data.ch_rate + '%');
 			});
 		},
 		error:function(request, error){
@@ -184,11 +188,58 @@ function updatesDetail() {
 function formCheckNowPrice(){
 	if ($("#sTrade_Form_dprice").text() != "" ) {
 
-		dcode = $("#sTrade_Form_dcode").val();
-		price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
+		var dcode = $("#sTrade_Form_dcode").val();
+		var price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
 		//price = $("#tbody > tr[trcode = '1'] > td[name='price']").text();
 		$("#sTrade_Form_dprice").text(price);
 	}
+}
+function sTrade_trade(){
+	var name = $('#sTrade_Form_dname').text();
+	var price = clearFormatNum($('#sTrade_Form_wprice').val());
+	var quan = clearFormatNum($('#sTrade_Form_dquan').val());
+	var code = clearFormatNum($('#sTrade_Form_dcode').val());
+	var gubun = $('#sTrade_Form_gubun').val();
+
+	$.ajax({
+		url: '../sTrade_trade/',
+		type : 'POST',
+		data : {'csrfmiddlewaretoken' : '{{csrf_token}}',
+				name : name,
+				price : price,
+				quan : quan,
+				code : code,
+				gubun : gubun },
+		dataType : 'json',
+		success: function(obj){
+			alert('success? : '+ '여기까지?')
+			$.each(obj, function(idx, data){
+				console.log('success? : '+ data.success)
+			});
+		},
+		error:function(request, error){
+			alert("fail sTrade_trade");
+			console.log("code:"+request.status+"message:"+request.responseText+"error:"+error);
+		}
+	});
+
+}
+
+function sTradeFormChange1(){
+	$('#sTrade_Form_th1').css("background-color","#FC9EBD");
+	$('#sTrade_Form_th2').css("background-color","#CFC3B5");
+	$('#bsBtn').css("background-color","#FC9EBD");
+	$('#bsBtn').text("매수");
+	$('#sTrade_Form_wprice_txt').text("매수가");
+	$('#sTrade_Form_gubun').val('B');
+}
+function sTradeFormChange2(){
+	$('#sTrade_Form_th1').css("background-color","#CFC3B5");
+	$('#sTrade_Form_th2').css("background-color","#A8C8F9");
+	$('#bsBtn').css("background-color","#A8C8F9");
+	$('#bsBtn').text("매도");
+	$('#sTrade_Form_wprice_txt').text("매도가");
+	$('#sTrade_Form_gubun').val('S');
 }
 
 </script>
@@ -201,6 +252,20 @@ $(document).ready(function(){
 	updatesTrade();
 	setInterval("updatesDetail()", 3000);
 	setInterval("formCheckNowPrice()", 1000);
+	$('#bsBtn').click(function(){
+		/*window.alert('searchBtn click');*/
+		alert("^^")
+		sTrade_trade();
+	});
+	$('#sTrade_Form_th1').click(function(){
+		sTradeFormChange1();
+	});
+	$('#sTrade_Form_th2').click(function(){
+		sTradeFormChange2();
+	});
+
+
+
 
 
 })

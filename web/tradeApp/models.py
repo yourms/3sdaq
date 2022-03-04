@@ -14,7 +14,7 @@ class Order(models.Model):
     gubun  = models.CharField(max_length=1, default='B')
     price  = models.IntegerField(default=0)
     quan   = models.IntegerField(default=0)
-    tquan = models.IntegerField(default=0)
+    tquan = models.IntegerField(default=0, null=True)
     buyer  = models.CharField(max_length=50, null=True)
     seller = models.CharField(max_length=50, null=True)
     tradeyn = models.CharField(max_length=1, default='N')
@@ -26,9 +26,8 @@ class Ballance(models.Model):
     code    = models.IntegerField()
     price  = models.IntegerField(default=0)
     quan   = models.IntegerField(default=0)
-    tquan = models.IntegerField(default=0)
     t_price = models.IntegerField(default=0)
-    ttime = models.DateTimeField(null=True)
+    time = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [

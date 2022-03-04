@@ -1,7 +1,7 @@
 from django.http      import JsonResponse
 from django.shortcuts import render, redirect
-from .models import *
-import json
+
+
 import sqlite3
 # Create your views here.
 def index(request):
@@ -132,8 +132,8 @@ def query_detail_order(code):
     #print(query_txt)
     return query_db(query_txt)
 
-def query_sTrade_trade(name, price, quan, code, gubun):
-    user_id = "minsu"
+def query_sTrade_trade(user_id, name, price, quan, code, gubun):
+
     bal_query_txt = ""
     bal_query_txt = " select A.id, A.user_id, A.code, A.price, A.quan, A.t_price"
     bal_query_txt += " from tradeApp_ballance A"
@@ -316,3 +316,9 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
                 query_txt += " where user_id =? and code =? and id =?"
                 delete_query = query_db(query_txt, (user_id, code, bal_query[0]['id']))  # 매수 매도할 update
     return 1
+
+#query_sTrade_trade(user_id, name, price, quan, code, gubun)
+#query_sTrade_trade("minsu2", "하이닉스", 100000, 30, 2, "S")
+#query_sTrade_trade("minsu", "하이닉스", 100000, 70, 2, "S")
+#query_sTrade_trade("minsu2", "하이닉스", 100000, 70, 2, "B")
+query_sTrade_trade("minsu2", "삼성전자", 81000, 10, 1, "S")
