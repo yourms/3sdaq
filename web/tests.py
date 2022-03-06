@@ -1,7 +1,5 @@
 from django.http      import JsonResponse
 from django.shortcuts import render, redirect
-
-
 import sqlite3
 # Create your views here.
 def index(request):
@@ -321,4 +319,14 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
 #query_sTrade_trade("minsu2", "하이닉스", 100000, 30, 2, "S")
 #query_sTrade_trade("minsu", "하이닉스", 100000, 70, 2, "S")
 #query_sTrade_trade("minsu2", "하이닉스", 100000, 70, 2, "B")
-query_sTrade_trade("minsu2", "삼성전자", 81000, 10, 1, "S")
+'''
+query_sTrade_trade("user4", "삼성전자", 75000, 10, 1, "S")
+query_sTrade_trade("user4", "삼성전자", 76000, 20, 1, "S")
+query_sTrade_trade("user6", "삼성전자", 77000, 20, 1, "S")
+query_sTrade_trade("user6", "삼성전자", 78000, 30, 1, "S")
+query_sTrade_trade("user6", "삼성전자", 79000, 40, 1, "S")
+'''
+#query_sTrade_trade("user2", "삼성전자", 78000, 20, 1, "B")
+#query_sTrade_trade("user2", "삼성전자", 79000, 40, 1, "B")
+#query_sTrade_trade("user2", "삼성전자", 77000, 10, 1, "B")
+query_sTrade_trade("user2", "삼성전자", 76000, 10, 1, "B")
