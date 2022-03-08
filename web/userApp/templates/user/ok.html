@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta charset="UTF-8">
+    <style>
+        *{
+    padding: 0;
+    margin: 0;
+}
+footer{
+    height: 700px;
+    display: flex;
+    align-items: center;
+}
+.container{
+    display: flex;
+    width: 100%;
+    height: 35px;
+    background: #607D8B
+}
+.text{
+    width: 162px;
+    padding: 8px;
+    font-weight: bold
+    font-size: 20px;
+    color: #FFC107;
+}
+.box{
+    display: inline;
+}
+.box a{
+    text-decoration: none;
+    color: white;
+}
+.tab{
+    display: inline-block;
+    margin-left: 40px;
+}
+
+
+    </style>
+    <title>Title</title>
+</head>
+<body>
+<font color="red">{{ session_user_name }}</font> 님 로그인 성공!!!
+<a href="../logout">로그아웃</a>
+<hr/>
+
+<a href="../list?category=sport">전체 사용자 보기</a>
+<br/>
+<a href="../../">index</a>
+<br/>
+<a href="../my_order">내 계좌</a>
+</body>
+<footer>
+    <div class="container">
+        <span class="text">Breaking News</span>
+        <marquee behavior="" direction="left" scrollamount="10">
+            {% for n in news%}
+                <div class="box">
+                    <a href="{{n.url}}" target="_blank">{{n.id}}. {{n.title}}</a><span class="tab"></span>
+                </div>
+            {% endfor %}
+        </marquee>
+    </div>
+</footer>
+</html>
