@@ -341,9 +341,9 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
     print("*" * 50)
     print("*" * 50)
 
-    sql_select = "select user_point from userApp_webuser where user_id = ?"
-    point_query = query_db(sql_select, (user_id,))
-    user_point = point_query[0]['user_point']
+    sql_select = "select user_amt from userApp_webuser where user_id = ?"
+    amt_query = query_db(sql_select, (user_id,))
+    user_amt = amt_query[0]['user_amt']
 
     if (len(bal_query) == 0):  # Ballance 없으면 팔지못하니 insert
         print("인서트문")
@@ -353,9 +353,9 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
         tmp_t_price = price * value_quan
         print("tmp_t_price " , tmp_t_price)
         insert_query = query_db(query_txt, (user_id, code, price, value_quan,tmp_t_price))  # 매수 매도할 update
-        user_point -= tmp_t_price
-        query_txt = " update userApp_webuser set user_point = ? where user_id = ? "
-        user_point_query = query_db(query_txt, (user_point, user_id))  # 유저의 현금을 차감
+        user_amt -= tmp_t_price
+        query_txt = " update userApp_webuser set user_amt = ? where user_id = ? "
+        user_amt_query = query_db(query_txt, (user_amt, user_id))  # 유저의 현금을 차감
     else: #Ballance 있으면 update
         print("발란쓰가 있어..!!")
         if (gubun == "B"):  # 사겠다.
@@ -369,9 +369,9 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
             query_txt += " where user_id =? and code=?"
             update_query = query_db(query_txt, (tmp_price, tmp_quan, tmp_t_price, user_id, code))  # 매수 매도할 update
             print("query_txt ::", query_txt)
-            user_point -= price * value_quan
-            query_txt = " update userApp_webuser set user_point = ? where user_id = ? "
-            user_point_query = query_db(query_txt, (user_point, user_id))  # 유저의 현금을 차감
+            user_amt -= price * value_quan
+            query_txt = " update userApp_webuser set user_amt = ? where user_id = ? "
+            user_amt_query = query_db(query_txt, (user_amt, user_id))  # 유저의 현금을 차감
         else: # 팔겠다.
             #tmp_t_price = bal_query[0]['t_price'] - (price * value_quan) # 기존코드 : 현재가에서뺀다
             tmp_t_price = bal_query[0]['t_price'] - (bal_query[0]['price'] * value_quan) # 팔때는 현재가가아닌 기존의 매입가에서 빼줘야한다. 
@@ -389,9 +389,9 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
                 query_txt = " delete from tradeApp_ballance"
                 query_txt += " where user_id =? and code =? and id =?"
                 delete_query = query_db(query_txt, (user_id, code, bal_query[0]['id']))  # 매수 매도할 update
-            user_point += price * value_quan
-            query_txt = " update userApp_webuser set user_point = ? where user_id = ? "
-            user_point_query = query_db(query_txt, (user_point, user_id))  # 유저의 현금을 가산
+            user_amt += price * value_quan
+            query_txt = " update userApp_webuser set user_amt = ? where user_id = ? "
+            user_amt_query = query_db(query_txt, (user_amt, user_id))  # 유저의 현금을 가산
     return 1
 
 def auto_sTrade_trade(user_id, price, quan, code, gubun):

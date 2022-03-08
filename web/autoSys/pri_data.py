@@ -8,8 +8,8 @@ def input_webuser():
     while True:
 
         sql_insert = ""
-        sql_insert += "insert into userApp_webuser(user_id, user_pwd, user_name, user_point, user_regdate)"
-        sql_insert += "values('user" + str(count) + "', 'user" + str(count) + "', '유저" + str(count) + "', 100000000, (select datetime('now', 'localtime')))"
+        sql_insert += "insert into userApp_webuser(user_id, user_pwd, user_name, user_acct, user_amt, user_regdate)"
+        sql_insert += "values('user" + str(count) + "', 'user" + str(count) + "', '유저" + str(count) + "', '001-23456-0" + str(count) + "' ,100000000, (select datetime('now', 'localtime')))"
         #print(sql_insert)
         cur.execute(sql_insert)
         count += 1
@@ -80,19 +80,19 @@ def input_ballance():
             quan = randrange(10, 100, 10)
             t_price = d_1price * quan
 
-            sql_select = "select user_point from userApp_webuser where user_id = ?"
+            sql_select = "select user_amt from userApp_webuser where user_id = ?"
             cur.execute(sql_select, (user_id,))
 
-            point = 0
-            for pointV in cur.fetchall():
-                point = pointV[0]
+            amt = 0
+            for amtV in cur.fetchall():
+                amt = amtV[0]
 
-            point -= t_price
-            if(point < 0):
+            amt -= t_price
+            if(amt < 0):
                 break
             sql_update = ""
-            sql_update += "update userApp_webuser set user_point = ? where user_id = ?"
-            cur.execute(sql_update, (point, user_id))
+            sql_update += "update userApp_webuser set user_amt = ? where user_id = ?"
+            cur.execute(sql_update, (amt, user_id))
 
 
             sql_insert = ""
