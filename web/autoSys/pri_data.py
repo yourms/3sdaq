@@ -114,9 +114,13 @@ def clear_inputData():
     cur.execute(sql_delete)
     sql_delete = "delete from tradeApp_comp"
     cur.execute(sql_delete)
+    sql_delete = "delete from tradeApp_order"
+    cur.execute(sql_delete)
     sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_ballance'"
     cur.execute(sql_update)
     sql_update = "update sqlite_sequence set seq = 0 where name = 'userApp_webuser'"
+    cur.execute(sql_update)
+    sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_order'"
     cur.execute(sql_update)
     con.commit()
     print("clear_inputData 완료")

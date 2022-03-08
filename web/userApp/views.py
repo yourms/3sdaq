@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect
 from .models          import *
-import schedule
+
 import time
 import os.path
 import sqlite3

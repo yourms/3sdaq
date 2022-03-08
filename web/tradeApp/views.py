@@ -1,7 +1,11 @@
 from django.http      import JsonResponse
 from django.shortcuts import render, redirect
-from .models import *
-import json
+import os
+import sys
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+dbURL = os.path.join(BASE_DIR , 'db.sqlite3')
+print("dbURL : " , dbURL)
+
 import sqlite3
 # Create your views here.
 def index(request):
@@ -31,6 +35,19 @@ def sTrade_list(request):
     # print(sTrade['code'])
     # print(json.dumps(sTrade, indent=2))
     #sTrade = json.dumps(my_query, ensure_ascii=False)
+    for value in market_price:
+        value['price'] = getComma(value['price'])
+        value['d_1price'] = getComma(value['d_1price'])
+        value['change'] = getComma(value['change'])
+        value['ch_rate'] = str(value['ch_rate']) + "%"
+    for value in myStock_price:
+        value['d_1price'] = getComma(value['d_1price'])
+        value['price'] = getComma(value['price'])
+        value['change'] = getComma(value['change'])
+        value['myprice'] = getComma(value['myprice'])
+        value['quan'] = getComma(value['quan'])
+        value['income_rate'] = str(value['income_rate']) + "%"
+        value['t_price'] = getComma(value['t_price'])
 
     context = {
         'sTrades': market_price,
@@ -83,7 +100,7 @@ def sTrade_trade(request):
 
 def query_db(query, args=(), one=False):
     print(">>>> query_db")
-    con = sqlite3.connect('./db.sqlite3')
+    con = sqlite3.connect(dbURL)
     cur = con.cursor()
     print("args : ", args)
     cur.execute(query, args)
@@ -122,7 +139,7 @@ def query_myStock_price(user_id):
 
     query_txt = " select D.*"
     query_txt += " from( select A.code, B.name, ifnull(C.price, B.d_1price) as price, B.d_1price, (ifnull(C.price, B.d_1price) - B.d_1price) AS change, A.price as myprice, A.quan,"
-    query_txt += " round(CAST((ifnull(C.price, B.d_1price) - A.price) AS FLOAT)/CAST(A.price AS FLOAT) * 100, 2) as income_rate"
+    query_txt += " round(CAST((ifnull(C.price, B.d_1price) - A.price) AS FLOAT)/CAST(A.price AS FLOAT) * 100, 2) as income_rate, A.t_price"
     query_txt += " from tradeApp_ballance A"
     query_txt += " join tradeApp_comp B on (A.code = B.code)"
     query_txt += " left join tradeApp_order C on(A.code = C.code and C.time2 > (select strftime('%Y-%m-%d', 'now')))"
@@ -376,3 +393,53 @@ def ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value_quan):
             query_txt = " update userApp_webuser set user_point = ? where user_id = ? "
             user_point_query = query_db(query_txt, (user_point, user_id))  # 유저의 현금을 가산
     return 1
+
+def auto_sTrade_trade(user_id, price, quan, code, gubun):
+    print("#" * 100)
+    print("#" * 100)
+    print(">>>>>>>  auto_sTrade_trade - Start")
+
+    print("user_id : ", user_id)
+    print("price : ", price)
+    print("quan : ", quan)
+    print("code : ", code)
+    print("gubun : ", gubun)
+
+    print(">>>>>>>  auto_sTrade_trade - End")
+
+    print("#" * 100)
+    print("#" * 100)
+
+def auto_sTrade_trade_print():
+
+    print("auto_sTrade_trade_print!!")
+
+def getComma(value):
+    str_value = str(value)
+    new_value = ""
+    for i, v in enumerate(range(len(str_value), 0,-1)):
+        if(i%3 == 0 and i != 0):
+            new_value = "," + new_value
+        new_value = str_value[v-1] + new_value
+    return new_value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

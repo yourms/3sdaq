@@ -62,22 +62,25 @@ def price_list(now_price, b_or_s):
             temp_price += 5000
         price_list.append(temp_price)
     price_list.sort()
+
     if(b_or_s == "B") :
-        select_price = random.choices(price_list, weights=[2, 3, 8, 15, 3, 1, 1], k=1)
+        select_price = random.choices(price_list, weights=[1, 2, 10, 15, 8, 1, 1], k=1)
+        return select_price[0]
     if (b_or_s == "S"):
-        select_price = random.choices(price_list, weights=[1, 1, 3, 15, 8, 3, 2], k=1)
-    print("price_list : ", select_price)
-    return select_price[0]
+        select_price = random.choices(price_list, weights=[1, 1, 10, 15, 8, 3, 2], k=1)
+        return select_price[0]
+
 
 
 
 
 cur = con.cursor()
 
-b_or_s_list = ["B","S"]
+b_or_s_list = ["B","S","B","S","B","S","S","S","B","S","B","S"]
 user_list = []
 comp_list = []
-
+countB = 0
+countS = 0
 
 def list_setting():
     global user_list
@@ -89,28 +92,56 @@ def list_setting():
     for row in cur.fetchall():
         user_list.append(row[0])
 
-    sql_select = "select code from tradeApp_comp"
-    cur.execute(sql_select)
-    for row in cur.fetchall():
-        comp_list.append([row[0]])
 
 
+print("len(comp_list)1 ", len(comp_list))
 def stock_auto_trade():
     ######################
     ######################
     ## K 값 조정하세요..!! ##
     ######################
     ######################
-    trade_user_list = sample(user_list, k=1)
+    global countB
+    global countS
+    global comp_list
     global b_or_s_list
+    global user_list
+    trade_user_list = sample(user_list, k=1)
+    print("len(comp_list)2 ", len(comp_list))
+
     print("stock_auto_trade")
     print("trade_user_list : ", trade_user_list)
+
+    sql_select = "select code from tradeApp_comp"
+    cur.execute(sql_select)
+    for row in cur.fetchall():
+        comp_list.append([row[0]])
+
     for user_id in trade_user_list:
 
-        b_or_s = random.choice(b_or_s_list)
+        #b_or_s = random.choice(b_or_s_list)
+        b_or_s_list2 = sample(b_or_s_list, k=1)
+        b_or_s = b_or_s_list2[0][0]
+        #b_or_s_list = random.choices(b_or_s_list, weights=[1, 1], k=1)
+        #b_or_s = b_or_s_list[0]
         print("var_b_or_s : ", b_or_s)
 
-        selected_comp = sample(comp_list, k=1)
+        if(b_or_s == "B"):
+            print("len(comp_list) ", len(comp_list))
+            selected_comp = sample(comp_list, k=1)
+            countB += 1
+        else :
+            countS += 1
+            comp_list = []
+            sql_select = "select code from tradeApp_ballance where user_id = ?"
+            cur.execute(sql_select, (user_id,) )
+            for row in cur.fetchall():
+                comp_list.append([row[0]])
+
+            print("len(comp_list) == 0 ", (len(comp_list) == 0))
+            if(len(comp_list) == 0):
+                continue
+            selected_comp = sample(comp_list, k=1)
 
         print("selected_comp : ", selected_comp[0][0])
         code = selected_comp[0][0]
@@ -134,6 +165,8 @@ def stock_auto_trade():
         select_quan = randrange(10, 100, 10)  # 수량 결정
         print('user_id, price, select_quan, code, b_or_s : ', user_id, price, select_quan, code, b_or_s)
         query_sTrade_trade(user_id, price, select_quan, code, b_or_s)
+        print("countB, countS, total : ", countB, countS, countB+countS)
+
 
 
 from datetime import datetime

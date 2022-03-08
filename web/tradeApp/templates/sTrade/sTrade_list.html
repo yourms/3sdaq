@@ -19,16 +19,16 @@
 			overflow-y: auto;
 		}
 		#second {
-		display:inline-block;
-		width: 300px;
-		float: left;
-		position: relative;
-  		left: 15%;
+			display:inline-block;
+			width: 300px;
+			float: left;
+			position: relative;
+			left: 15%;
 		}
 		#three {
 
 			display:inline-block;
-			width:80%;
+			width:1500px;
 			height:620px;
 			overflow-y: auto;
 
@@ -39,8 +39,8 @@
 		  overflow-y: auto;
 		  align:center;
 		}
-		th{height:40px;}
-		td{height:40px;}
+		th{height:30px;}
+		td{height:20px;}
 
 		th{background-color: #f2f2f2;}
 		tr:nth-child(even) {background-color: #f2f2f2;}
@@ -120,9 +120,19 @@
 	</div>
 	<div id="three" style="margin-top: 50px;">
 		<table class="table table-bordered" stype="height:300px; width:100%;" align="center">
+			<colgroup>
+				<col width="18%" />
+				<col width="11%" />
+				<col width="11%" />
+				<col width="12%" />
+				<col width="11%" />
+				<col width="12%" />
+				<col width="11%" />
+				<col width="14%" />
+			</colgroup>
 			<thead>
 				<tr>
-					<th style="width: 10px">종목</th><th>전일가</th><th>현재가</th><th>전일대비</th><th>수익률</th><th>매입가</th><th>수량</th>
+					<th style="width: 10px">종목</th><th>전일가</th><th>현재가</th><th>전일대비</th><th>수익률</th><th>매입가</th><th>수량</th><th>총금액</th>
 				</tr>
 			</thead>
 			<tbody id="tbody3">
@@ -134,9 +144,10 @@
 					<td width="100" name="d_1price" id="td_myTrade_d_1price_{{forloop.counter0}}">{{myTrade.d_1price}}</td>
 					<td width="100" name="price" id="td_myTrade_price_{{forloop.counter0}}">{{myTrade.price}}</td>
 					<td width="100" name="change" id="td_myTrade_change_{{forloop.counter0}}">{{myTrade.change}}</td>
-					<td width="100" name="income_rate" id="td_myTrade_ch_rate_{{forloop.counter0}}">{{myTrade.income_rate}}</td>
+					<td width="100" name="income_rate" id="td_myTrade_income_rate_{{forloop.counter0}}">{{myTrade.income_rate}}</td>
 					<td width="100" name="myprice" id="td_myTrade_myprice_{{forloop.counter0}}">{{myTrade.myprice}}</td>
 					<td width="100" name="quan" id="td_myTrade_quan_{{forloop.counter0}}">{{myTrade.quan}}</td>
+					<td width="100" name="quan" id="td_myTrade_t_price_{{forloop.counter0}}">{{myTrade.t_price}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -237,20 +248,47 @@ function updatesTrade(){
 			console.log(obj);
 			console.log(obj['sTrades']);
 			$.each(obj['sTrades'], function(idx, data){
+				var before_price = clearFormatNum($('#td_sTrade_price_'+idx).text());
+				if(before_price < clearFormatNum(data.price)){       // 변경된 데이터의 색 반짝거림
+					var hexColor = rgb2hex($('#now_sTrade_'+idx).css("background-color"));
+					if(hexColor == "#000000") hexColor = "#FFFFFF";
+					$('#now_sTrade_'+idx).css("background-color","#FC9EBD");
+					setTimeout(function() {
+						$('#now_sTrade_'+idx).css("background-color",hexColor);
+					}, 500);
+				}
+				if(before_price > clearFormatNum(data.price)){       // 변경된 데이터의 색 반짝거림
+					var hexColor = rgb2hex($('#now_sTrade_'+idx).css("background-color"));
+					if(hexColor == "#000000") hexColor = "#FFFFFF";
+					$('#now_sTrade_'+idx).css("background-color","#A8C8F9");
+					setTimeout(function() {
+						$('#now_sTrade_'+idx).css("background-color",hexColor);
+					}, 500);
+
+				}
 				$('#td_sTrade_name_'+idx).text(data.name);
 				$('#td_sTrade_price_'+idx).text(getComma(data.price));
 				$('#td_sTrade_d_1price_'+idx).text(getComma(data.d_1price));
 				$('#td_sTrade_change_'+idx).text(getComma(data.change));
-				$('#td_sTrade_ch_rate_'+idx).text(data.ch_rate + '%');
+				$('#td_sTrade_ch_rate_'+idx).text(data.ch_rate);
+
+
 			});
 			$.each(obj['myTrades'], function(idx, data){
+			    var tr_code = $('#now_myTrade_'+idx).attr('dcode');
+			    var tr_name = $('#now_myTrade_'+idx).attr('dname');
+
+			    if(data.code != tr_code){
+					refreshMemList();
+			    }
 				$('#td_myTrade_name_'+idx).text(data.name);
 				$('#td_myTrade_d_1price_'+idx).text(getComma(data.d_1price));
 				$('#td_myTrade_price_'+idx).text(getComma(data.price));
 				$('#td_myTrade_change_'+idx).text(getComma(data.change));
-				$('#td_myTrade_ch_rate_'+idx).text(data.income_rate + '%');
+				$('#td_myTrade_income_rate_'+idx).text(data.income_rate);
 				$('#td_myTrade_myprice_'+idx).text(getComma(data.myprice));
 				$('#td_myTrade_quan_'+idx).text(getComma(data.quan));
+				$('#td_myTrade_t_price_'+idx).text(getComma(data.t_price));
 			});
 
 		},
@@ -259,7 +297,7 @@ function updatesTrade(){
 			console.log("code:"+request.status+"message:"+request.responseText+"error:"+error);
 		}
 	});
-	timerID = setTimeout("updatesTrade()", 5000); // 5초 단위로 갱신 처리
+	timerID = setTimeout("updatesTrade()", 1000); // 5초 단위로 갱신 처리
 }
 function getComma(n) {
 	n = clearFormatNum(n);
@@ -272,6 +310,21 @@ function getComma(n) {
 function clearFormatNum(num) {
 	if (num=="") return num;
 	return String(num).replace(/,/gi, "")
+}
+function rgb2hex(rgb) {
+   rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+ 	return (rgb && rgb.length === 4) ? "#" +
+  ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+  ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}
+function ColorToHex(color) {
+  var hexadecimal = color.toString(16);
+  return hexadecimal.length == 1 ? "0" + hexadecimal : hexadecimal;
+}
+
+function ConvertRGBtoHex(red, green, blue) {
+  return "#" + ColorToHex(red) + ColorToHex(green) + ColorToHex(blue);
 }
 function updatesDetail() {
 	if ( $( "#now_detail" ).length ) {
@@ -306,7 +359,8 @@ function sTrade_trade(){
 				gubun : gubun },
 		dataType : 'json',
 		success: function(obj){
-			refreshMemList()
+			if(gubun == "B") alert("매수주문이 완료되었습니다.");
+			if(gubun == "S") alert("매도주문이 완료되었습니다.");
 		},
 		error:function(request, error){
 			alert("fail sTrade_trade");
@@ -339,7 +393,7 @@ function sTradeFormChange2(){
 <script>
 $(document).ready(function(){
 	updatesTrade();
-	setInterval("updatesDetail()", 3000);
+	setInterval("updatesDetail()", 2000);
 	setInterval("formCheckNowPrice()", 1000);
 	$('#bsBtn').click(function(){
 		/*window.alert('searchBtn click');*/
