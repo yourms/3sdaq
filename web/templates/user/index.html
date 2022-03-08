@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {{error}}
+    <form action="../login/" method="post">
+        {% csrf_token %}
+        Id  : <input type="text" name="id"><br/>
+        PWD : <input type="text" name="pwd"><p/>
+        &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="login">
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="../registerForm">가입</a>
+    </form>
+
+
+</body>
+</html>
