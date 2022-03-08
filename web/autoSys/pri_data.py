@@ -123,7 +123,7 @@ def clear_inputData():
     sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_order'"
     cur.execute(sql_update)
     con.commit()
-    print("clear_inputData 완료")
+    print("clear_inputData 완료 ")
     # end clear_inputData()
 
 clear_inputData()

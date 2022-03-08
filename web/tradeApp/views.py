@@ -9,7 +9,7 @@ print("dbURL : " , dbURL)
 import sqlite3
 # Create your views here.
 def index(request):
-    print(">>>> index")
+    print(">>>> index ")
 
     # if request.session.get('user_id') and request.session.get('user_name'):
     #     context = {

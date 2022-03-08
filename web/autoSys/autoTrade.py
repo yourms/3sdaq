@@ -165,7 +165,7 @@ def stock_auto_trade():
         select_quan = randrange(10, 100, 10)  # 수량 결정
         print('user_id, price, select_quan, code, b_or_s : ', user_id, price, select_quan, code, b_or_s)
         query_sTrade_trade(user_id, price, select_quan, code, b_or_s)
-        print("countB, countS, total : ", countB, countS, countB+countS)
+        print("countB, countS, total1 : ", countB, countS, countB+countS)
 
 
 
