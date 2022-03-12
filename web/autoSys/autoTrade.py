@@ -3,6 +3,8 @@ import random
 import sys
 import sqlite3
 from random import sample, randrange
+from math import floor
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 print("BASE_DIR : ", BASE_DIR)
@@ -64,10 +66,10 @@ def price_list(now_price, b_or_s):
     price_list.sort()
 
     if(b_or_s == "B") :
-        select_price = random.choices(price_list, weights=[1, 2, 10, 15, 8, 1, 1], k=1)
+        select_price = random.choices(price_list, weights=[1, 2, 10, 12, 10, 2, 1], k=1)
         return select_price[0]
     if (b_or_s == "S"):
-        select_price = random.choices(price_list, weights=[1, 1, 10, 15, 8, 3, 2], k=1)
+        select_price = random.choices(price_list, weights=[1, 2, 10, 12, 10, 2, 1], k=1)
         return select_price[0]
 
 
@@ -118,7 +120,8 @@ def stock_auto_trade():
         comp_list.append([row[0]])
 
     for user_id in trade_user_list:
-
+        if(user_id == "blackrock"):
+            continue
         #b_or_s = random.choice(b_or_s_list)
         b_or_s_list2 = sample(b_or_s_list, k=1)
         b_or_s = b_or_s_list2[0][0]
@@ -152,6 +155,7 @@ def stock_auto_trade():
         query_txt += " left join tradeApp_order B on(A.code = B.code and B.time1 > (select strftime('%Y-%m-%d', 'now'))"
         query_txt += "    and B.quan = B.tquan and B.tradeyn='Y')"
         query_txt += " where A.code = ?"
+        query_txt += " order by B.time2 desc"
 
         print("query_txt,  ", query_txt)
         cur.execute(query_txt, (code,))
@@ -162,33 +166,70 @@ def stock_auto_trade():
 
         price = price_list(now_price, b_or_s) # 가격 결정
         print("price_list : ", price)
-        select_quan = randrange(10, 100, 10)  # 수량 결정
+        select_quan = 0
+        if (b_or_s == "S"):
+            query_txt = " select quan from tradeApp_ballance where user_id = ? and code = ?"
+            cur.execute(query_txt, (user_id, code))
+            have_quan = 0
+            for row in cur.fetchall():
+                have_quan = row[0]
+            print("have_quan : ", have_quan)
+            if (have_quan <= 50): # 100 주 아래로 가지고있으면 전량 판매
+                select_quan = have_quan
+                print("1 have_quan , ", have_quan)
+            elif(have_quan > 300):
+                have_quan = int(floor((have_quan/2)/10) * 10)
+                print("2 have_quan , ", have_quan)
+                select_quan = randrange(50, have_quan, 10)  # 수량 결정
+            else:
+                print("3 have_quan , ", have_quan)
+                select_quan = randrange(50, have_quan, 10)  # 수량 결정
+        else:
+            select_quan = randrange(10, 100, 10)  # 수량 결정
         print('user_id, price, select_quan, code, b_or_s : ', user_id, price, select_quan, code, b_or_s)
         query_sTrade_trade(user_id, price, select_quan, code, b_or_s)
         print("countB, countS, total1 : ", countB, countS, countB+countS)
+    now = datetime.now()
+    nowTime = now.strftime('%S')
+    if (nowTime == "05" or nowTime == "10" or nowTime == "45" or nowTime == "00"):
+        delete_not_sold()
+
+def delete_not_sold():
+    import datetime
+
+    dt_now = datetime.datetime.now()
+    #d_today = datetime.date.today()
+    # datetime.datetime.now() - datetime.timedelta(minutes=15)
+    stand_time = (dt_now - datetime.timedelta(minutes=5)).strftime('%Y-%m-%d %H:%M:%S')
+    query_txt = " delete from tradeApp_order where tradeyn = 'N' and time1 < ?"
+    print("###############################")
+    print("##########  delete 시작 ########")
+    cur.execute(query_txt, (stand_time,))
+    con.commit()
+    print("##########  delete 끝 ##########")
+    print("###############################")
 
 
 
-from datetime import datetime
-import time
-now = datetime.now()
-nowTime = now.strftime('%S')
 list_setting()
 while_count = 0
 while True :
-    now = datetime.now()
-    nowTime = now.strftime('%S')
+
     #print("nowTime : ", nowTime)
     #print(nowTime == "30")
     #if(nowTime == "05" or nowTime == "10" or nowTime == "45" or nowTime == "00"):
     if(True):
         #while_count =  while_count + 1
         stock_auto_trade()
+
+
         #print(" while_count : ", while_count)
         #time.sleep(3)
     # else:
     #     while_count = 0
     #     print("nowTime : ", nowTime)
+    #  2022-03-13 00:07
+
 
 
 

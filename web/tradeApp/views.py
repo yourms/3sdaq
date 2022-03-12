@@ -173,6 +173,7 @@ def query_detail_order(code):
     query_txt += "     where A.code =" + code
     query_txt += "     and A.gubun != 'C'"
     query_txt += "     and A.quan != A.tquan"
+    query_txt += "     and A.time1 > (select strftime('%Y-%m-%d', 'now'))"
     query_txt += "     order by A.price desc)"
     query_txt += " Group by code, gubun, price"
     query_txt += " order by gubun desc, price desc"
@@ -219,23 +220,30 @@ def query_sTrade_trade(user_id, price, quan, code, gubun):
                 print("2. 주식이 부족해요..!!");
                 return my_query
 
+    rgubun = "";
+    other_id = "";
+    if (gubun == 'B'):
+        rgubun = 'S'
 
+    elif (gubun == 'S'):
+        rgubun = 'B'
     query_txt = " select A.id, A.code, B.name, A.gubun, A.price, B.d_1price, (A.quan - A.tquan) as quan, A.tquan, A.time1, A.buyer, A.seller"
     query_txt += " from tradeApp_order A"
     query_txt += " join tradeApp_comp B on(A.code = B.code)"
     query_txt += " where A.code = ?"
     query_txt += " and A.gubun = ?"
-    query_txt += " and A.price = ?"
+    if (rgubun == 'B'):
+        query_txt += " and A.price >= ?"
+    else:
+        query_txt += " and A.price <= ?"
     query_txt += " and A.quan != A.tquan"
-    query_txt += " order by A.time1 asc"
+    query_txt += " and A.time1 > (select strftime('%Y-%m-%d', 'now'))"
+    if (rgubun == 'B'):
+        query_txt += " order by A.price desc, A.time1 asc"
+    else:
+        query_txt += " order by A.price asc, A.time1 asc"
     #print(query_txt)
-    rgubun = "";
-    other_id = "";
-    if(gubun == 'B'):
-        rgubun = 'S'
 
-    elif(gubun == 'S'):
-        rgubun = 'B'
     my_query = query_db(query_txt, (code, rgubun, price)) # 매수 매도할 select
     #print("my_query lenth : ", len(my_query))
     #print("my_query  : ", my_query)
@@ -254,80 +262,69 @@ def query_sTrade_trade(user_id, price, quan, code, gubun):
     #             B - A 만큼만 update 상태는 B,S
     #             break;
 
-    if (len(my_query) == 0):
+
+    sum_quan = 0
+    cal_quan = quan
+    for value in my_query:
+        sum_quan += value['quan']
+        if (gubun == 'B'):
+            other_id = value['seller']
+        elif (gubun == 'S'):
+            other_id = value['buyer']
+        if cal_quan >= value['quan']:
+            query_txt = " update tradeApp_order set"
+            if (gubun == "B"):
+                query_txt += " gubun = ?, buyer = ?, tradeyn = 'Y',"
+            else:
+                query_txt += " gubun = ?, seller = ?, tradeyn = 'Y',"
+            query_txt += " time2=(select datetime('now','localtime')), tquan = ?"
+            query_txt += " where id = ?"
+            print("query_txt : ", query_txt)
+            tmpGubun = "F"
+            tmptquan = value['quan'] + value['tquan']
+            update_query = query_db(query_txt, (tmpGubun, user_id, tmptquan, value['id']))  # 매수 매도할 update
+            print("value['quan'] :::: ", value['quan'])
+            result = ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, value['price'], value['quan'])
+            result = ballanceUpdateQuery(rgubun, bal_query_txt, other_id, code, value['price'], value['quan'])
+
+
+            cal_quan -= value['quan']
+            print("1 quan, sum_quan , cal_quan ", quan, sum_quan , cal_quan)
+            if quan == sum_quan:
+                print(">>>>>  quan == sum_quan")
+                print("2 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
+                break
+        else:
+            print("3 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
+            temp_quan = (value['tquan'] + cal_quan)
+            # update cal_quan
+            query_txt = " update tradeApp_order set"
+            if (gubun == "B"):
+                query_txt += " buyer = ?, tradeyn = 'Y',"
+            else:
+                query_txt += " seller = ?, tradeyn = 'Y',"
+            query_txt += " time2=(select datetime('now','localtime')), tquan = ?"
+            query_txt += " where id = ?"
+            print("query_txt : ", query_txt)
+            update_query = query_db(query_txt, (user_id, temp_quan, value['id']))  # 매수 매도할 insert
+            print("value['quan'] :::: " , value['quan'])
+            result = ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, value['price'], cal_quan)
+            result = ballanceUpdateQuery(rgubun, bal_query_txt, other_id, code, value['price'], cal_quan)
+            break
+    # for end
+    print("4 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
+    if quan > sum_quan:
+        print("5 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
+        # insert cal_quan(남은거)
         query_txt = ""
-        if(gubun == "B"):
+        if (gubun == "B"):
             query_txt += " insert into tradeApp_order(code, gubun, price, quan, tquan, buyer, tradeyn, time1)"
         else:
             query_txt += " insert into tradeApp_order(code, gubun, price, quan, tquan, seller, tradeyn, time1)"
         query_txt += " values(?,?, ?, ?, 0, ?, 'N', (select datetime('now','localtime')))"
         print("query_txt : ", query_txt)
-        insert_query = query_db(query_txt, (code, gubun, price, quan, user_id))  # 매수 매도할 insert
+        insert_query = query_db(query_txt, (code, gubun, price, cal_quan, user_id))  # 매수 매도할 insert
         print("inert_query_db : ", my_query)
-
-    else:
-        sum_quan = 0
-        cal_quan = quan
-        for value in my_query:
-            sum_quan += value['quan']
-            if (gubun == 'B'):
-                other_id = value['seller']
-            elif (gubun == 'S'):
-                other_id = value['buyer']
-            if cal_quan >= value['quan']:
-                query_txt = " update tradeApp_order set"
-                if (gubun == "B"):
-                    query_txt += " gubun = ?, buyer = ?, tradeyn = 'Y',"
-                else:
-                    query_txt += " gubun = ?, seller = ?, tradeyn = 'Y',"
-                query_txt += " time2=(select datetime('now','localtime')), tquan = ?"
-                query_txt += " where id = ?"
-                print("query_txt : ", query_txt)
-                tmpGubun = "F"
-                tmptquan = value['quan'] + value['tquan']
-                update_query = query_db(query_txt, (tmpGubun, user_id, tmptquan, value['id']))  # 매수 매도할 update
-                print("value['quan'] :::: ", value['quan'])
-                result = ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, value['quan'])
-                result = ballanceUpdateQuery(rgubun, bal_query_txt, other_id, code, price, value['quan'])
-
-
-                cal_quan -= value['quan']
-                print("1 quan, sum_quan , cal_quan ", quan, sum_quan , cal_quan)
-                if quan == sum_quan:
-                    print(">>>>>  quan == sum_quan")
-                    print("2 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
-                    break
-            else:
-                print("3 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
-                temp_quan = (value['tquan'] + cal_quan)
-                # update cal_quan
-                query_txt = " update tradeApp_order set"
-                if (gubun == "B"):
-                    query_txt += " buyer = ?, tradeyn = 'Y',"
-                else:
-                    query_txt += " seller = ?, tradeyn = 'Y',"
-                query_txt += " time2=(select datetime('now','localtime')), tquan = ?"
-                query_txt += " where id = ?"
-                print("query_txt : ", query_txt)
-                update_query = query_db(query_txt, (user_id, temp_quan, value['id']))  # 매수 매도할 insert
-                print("value['quan'] :::: " , value['quan'])
-                result = ballanceUpdateQuery(gubun, bal_query_txt, user_id, code, price, cal_quan)
-                result = ballanceUpdateQuery(rgubun, bal_query_txt, other_id, code, price, cal_quan)
-                break
-        # for end
-        print("4 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
-        if quan > sum_quan:
-            print("5 quan, sum_quan , cal_quan ", quan, sum_quan, cal_quan)
-            # insert cal_quan(남은거)
-            query_txt = ""
-            if (gubun == "B"):
-                query_txt += " insert into tradeApp_order(code, gubun, price, quan, tquan, buyer, tradeyn, time1)"
-            else:
-                query_txt += " insert into tradeApp_order(code, gubun, price, quan, tquan, seller, tradeyn, time1)"
-            query_txt += " values(?,?, ?, ?, 0, ?, 'N', (select datetime('now','localtime')))"
-            print("query_txt : ", query_txt)
-            insert_query = query_db(query_txt, (code, gubun, price, cal_quan, user_id))  # 매수 매도할 insert
-            print("inert_query_db : ", my_query)
 
     return my_query
 
@@ -422,7 +419,7 @@ def getComma(value):
             new_value = "," + new_value
         new_value = str_value[v-1] + new_value
     return new_value
-
+#  2022-03-13 00:07
 
 
 

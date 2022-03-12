@@ -9,11 +9,16 @@ def input_webuser():
 
         sql_insert = ""
         sql_insert += "insert into userApp_webuser(user_id, user_pwd, user_name, user_acct, user_amt, user_regdate)"
-        sql_insert += "values('user" + str(count) + "', 'user" + str(count) + "', '유저" + str(count) + "', '001-23456-0" + str(count) + "' ,100000000, (select datetime('now', 'localtime')))"
+        sql_insert += "values('user" + str(count) + "', 'user" + str(count) + "', '유저" + str(count) + "', '001-23456-0" + str(count) + "' ,1000000000, (select datetime('now', 'localtime')))"
         #print(sql_insert)
         cur.execute(sql_insert)
         count += 1
         if(count > 20):
+            sql_insert = ""
+            sql_insert += "insert into userApp_webuser(user_id, user_pwd, user_name, user_acct, user_amt, user_regdate)"
+            sql_insert += "values('blackrock', 'blackrock', 'blackrock', '999-23456-651' ,1000000000000000, (select datetime('now', 'localtime')))"
+            # print(sql_insert)
+            cur.execute(sql_insert)
             break
     con.commit()
     print("input_webuser 완료")
@@ -70,14 +75,19 @@ def input_ballance():
         comp_list.append([row[0], row[1]])
 
     for user_id in user_list:
-        buy_list = sample(comp_list, k=5)
+        if (user_id == "blackrock"):
+            buy_list = sample(comp_list, k=20)
+        else:
+            buy_list = sample(comp_list, k=5)
         #print(buy_list)
         for code, d_1price in buy_list:
             #print(code, d_1price)
 
 
-
-            quan = randrange(10, 100, 10)
+            if(user_id == "blackrock"):
+                quan = randrange(100000, 1000000, 1000)
+            else:
+                quan = randrange(100, 300, 10)
             t_price = d_1price * quan
 
             sql_select = "select user_amt from userApp_webuser where user_id = ?"
@@ -132,7 +142,7 @@ input_comp()
 input_ballance()
 
 con.close()
-
+#  2022-03-13 00:07
 
 
 
