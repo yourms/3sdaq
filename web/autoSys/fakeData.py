@@ -202,7 +202,12 @@ def stock_auto_trade(d_state, d_day):
                 select_quan = randrange(50, have_quan, 10)  # 수량 결정
         else:
             if(user_id == "blackrock"): #시장지배자
-                select_quan = randrange(100, 2000, 100)  # 수량 결정
+                if (d_state == "GOOD"):
+                    select_quan = randrange(100, 2000, 100)  # 수량 결정
+                if (d_state == "SOSO"):
+                    select_quan = randrange(100, 700, 100)  # 수량 결정
+                if (d_state == "BAD"):
+                    select_quan = randrange(100, 300, 100)  # 수량 결정
             else:
                 select_quan = randrange(10, 100, 10)  # 수량 결정
         #print('user_id, price, select_quan, code, b_or_s : ', user_id, price, select_quan, code, b_or_s)

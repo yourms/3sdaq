@@ -85,7 +85,7 @@ def input_ballance():
 
 
             if(user_id == "blackrock"):
-                quan = randrange(10000, 100000, 1000)
+                quan = randrange(1000, 50000, 1000)
             else:
                 quan = randrange(100, 300, 10)
             t_price = d_1price * quan
