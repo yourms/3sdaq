@@ -31,26 +31,26 @@ def input_comp():
     sql_insert += "insert into tradeApp_comp(code, name, type, vol, d_1price, regdate)"
     sql_insert += "values(?,?,?,?,?,(select datetime('now', 'localtime')))"
     comp_list = [
-        (1, '삼성전자', 'IT', 100000000, 71500),
-        (2, 'LG에너지솔루션', '화학', 100000000, 428500),
-        (3, 'SK하이닉스', 'IT', 100000000, 124500),
-        (4, 'NAVER', 'IT', 100000000, 317500),
-        (5, '삼성바이오로직스', '제약', 100000000,775000),
-        (6, '카카오', 'IT', 100000000, 94700),
-        (7, 'LG화학', '화학', 100000000, 535000),
-        (8, '현대차', '자동차', 100000000, 172500),
-        (9, '삼성SDI', 'IT', 100000000, 528000),
-        (10, '기아', '자동차', 100000000, 73100),
-        (11, 'POSCO', '철강', 100000000, 291500),
-        (12, 'KB금융', '금융', 100000000, 57500),
-        (13, '카카오뱅크', '금융', 100000000, 48700),
-        (14, '셀트리온', '제약', 100000000, 167000),
-        (15, '현대모비스', '자동차', 100000000, 225000),
-        (16, '삼성물산', '물류', 100000000, 110500),
-        (17, 'LG전자', 'IT', 100000000, 123500),
-        (18, '신한지주', '금융', 100000000, 38200),
-        (19, 'SK이노베이션', '화학', 100000000, 212000),
-        (20, '카카오페이', '금융', 100000000, 143500),
+        (1, '삼성전자', 'IT', 1000000, 71500),
+        (2, 'LG에너지솔루션', '화학', 1000000, 428500),
+        (3, 'SK하이닉스', 'IT', 1000000, 124500),
+        (4, 'NAVER', 'IT', 1000000, 317500),
+        (5, '삼성바이오로직스', '제약', 1000000,775000),
+        (6, '카카오', 'IT', 1000000, 94700),
+        (7, 'LG화학', '화학', 1000000, 535000),
+        (8, '현대차', '자동차', 1000000, 172500),
+        (9, '삼성SDI', 'IT', 1000000, 528000),
+        (10, '기아', '자동차', 1000000, 73100),
+        (11, 'POSCO', '철강', 1000000, 291500),
+        (12, 'KB금융', '금융', 1000000, 57500),
+        (13, '카카오뱅크', '금융', 1000000, 48700),
+        (14, '셀트리온', '제약', 1000000, 167000),
+        (15, '현대모비스', '자동차', 1000000, 225000),
+        (16, '삼성물산', '물류', 1000000, 110500),
+        (17, 'LG전자', 'IT', 1000000, 123500),
+        (18, '신한지주', '금융', 1000000, 38200),
+        (19, 'SK이노베이션', '화학', 1000000, 212000),
+        (20, '카카오페이', '금융', 1000000, 143500),
     ]
 
     #print(sql_insert)
@@ -85,7 +85,7 @@ def input_ballance():
 
 
             if(user_id == "blackrock"):
-                quan = randrange(100000, 1000000, 1000)
+                quan = randrange(10000, 100000, 1000)
             else:
                 quan = randrange(100, 300, 10)
             t_price = d_1price * quan
@@ -126,11 +126,19 @@ def clear_inputData():
     cur.execute(sql_delete)
     sql_delete = "delete from tradeApp_order"
     cur.execute(sql_delete)
+    sql_delete = "delete from tradeApp_d_price"
+    cur.execute(sql_delete)
+    sql_delete = "delete from tradeApp_d_trade"
+    cur.execute(sql_delete)
     sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_ballance'"
     cur.execute(sql_update)
     sql_update = "update sqlite_sequence set seq = 0 where name = 'userApp_webuser'"
     cur.execute(sql_update)
     sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_order'"
+    cur.execute(sql_update)
+    sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_d_price'"
+    cur.execute(sql_update)
+    sql_update = "update sqlite_sequence set seq = 0 where name = 'tradeApp_d_trade'"
     cur.execute(sql_update)
     con.commit()
     print("clear_inputData 완료 ")

@@ -220,7 +220,7 @@ function trade_preOrder(obj){
 	var dcode = $(obj).attr('dcode');
 	var dname = $(obj).attr('dname');
 	var dprice = getComma($(obj).attr('dprice'));
-	var dquan = $(obj).attr('dquan');
+	var dquan = getComma($(obj).attr('dquan'));
 	console.log("dquan : " + dquan);
 	var price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
 	$('#sTrade_Form_dname').text(dname);
@@ -395,9 +395,8 @@ function sTrade_trade(){
 			if(gubun == "B") alert("매수주문이 완료되었습니다.");
 			if(gubun == "S") alert("매도주문이 완료되었습니다.");
 		},
-		error:function(request, error){
-			alert("fail sTrade_trade");
-			console.log("code:"+request.status+"message:"+request.responseText+"error:"+error);
+		error:function(data){
+           	alert(data.responseJSON.error); // the message
 		}
 	});
 }
@@ -439,10 +438,11 @@ $(document).ready(function(){
 		sTradeFormChange2();
 	});
 
-	$('#sTrade_Form_wprice').on("propertychange change keyup paste input", function() {
+	$('#sTrade_Form_wprice').on("change keyup", function() {
 		$('#sTrade_Form_wprice').val(getComma($('#sTrade_Form_wprice').val()));
 	});
-	$('#sTrade_Form_dquan').on("propertychange change keyup paste input", function() {
+<!--	$('#sTrade_Form_dquan').on("propertychange change keyup paste input", function() {-->
+	$('#sTrade_Form_dquan').on("change keyup", function() {
 		$('#sTrade_Form_dquan').val(getComma($('#sTrade_Form_dquan').val()));
 	});
 

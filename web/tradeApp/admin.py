@@ -4,3 +4,4 @@ from .models        import *
 admin.site.register(Comp)
 admin.site.register(Order)
 admin.site.register(Ballance)
+admin.site.register(D_price)
