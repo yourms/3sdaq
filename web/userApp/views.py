@@ -1,3 +1,4 @@
+# 주석
 from django.shortcuts import render , redirect
 from .models          import *
 import schedule
