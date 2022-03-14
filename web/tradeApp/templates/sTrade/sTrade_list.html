@@ -166,9 +166,9 @@ function detail_order_click(e){
 	}
 }
 function detail_order(e){
-	console.log( $(e).attr('trCode'));
+	//console.log( $(e).attr('trCode'));
 	caller_Id = $(e).attr('copyId');
-	console.log( "caller_Id : " + caller_Id);
+	//console.log( "caller_Id : " + caller_Id);
 	$.ajax({
 		url : '../detail_order/',
 		type : 'POST',
@@ -177,7 +177,7 @@ function detail_order(e){
 
 		dataType : 'json',
 		success : function(obj){
-			console.log( "#^^#");
+			//console.log( "#^^#");
 			$('#now_detail').remove();
 			var count = false
 			var txt = "";
@@ -211,7 +211,6 @@ function detail_order(e){
 		},
 		error:function(request, error){
 			alert("fail");
-			console.log("code:"+request.status+"message:"+request.responseText+"error:"+error);
 		}
 	});
 }
@@ -221,7 +220,7 @@ function trade_preOrder(obj){
 	var dname = $(obj).attr('dname');
 	var dprice = getComma($(obj).attr('dprice'));
 	var dquan = getComma($(obj).attr('dquan'));
-	console.log("dquan : " + dquan);
+	//console.log("dquan : " + dquan);
 	var price = $("#tbody > tr[trCode = "+dcode+"] > td[name='price']").text();
 	$('#sTrade_Form_dname').text(dname);
 	$('#sTrade_Form_dprice').text(price);
@@ -245,8 +244,8 @@ function updatesTrade(){
 				typeST : 'update'},
 		dataType : 'json',
 		success: function(obj){
-			console.log(obj);
-			console.log(obj['sTrades']);
+			//console.log(obj);
+			//console.log(obj['sTrades']);
 			$.each(obj['sTrades'], function(idx, data){
 				var before_price = clearFormatNum($('#td_sTrade_price_'+idx).text());
 				if(before_price < clearFormatNum(data.price)){       // 변경된 데이터의 색 반짝거림
@@ -327,7 +326,6 @@ function updatesTrade(){
 		},
 		error:function(request, error){
 			alert("fail");
-			console.log("code:"+request.status+"message:"+request.responseText+"error:"+error);
 		}
 	});
 	timerID = setTimeout("updatesTrade()", 1000); // 5초 단위로 갱신 처리
@@ -374,7 +372,7 @@ function formCheckNowPrice(){
 	}
 }
 function sTrade_trade(){
-	console.log("sTrade_trade!!!!");
+	//console.log("sTrade_trade!!!!");
 	var name = $('#sTrade_Form_dname').text();
 	var price = clearFormatNum($('#sTrade_Form_wprice').val());
 	var quan = clearFormatNum($('#sTrade_Form_dquan').val());
@@ -394,6 +392,7 @@ function sTrade_trade(){
 		success: function(obj){
 			if(gubun == "B") alert("매수주문이 완료되었습니다.");
 			if(gubun == "S") alert("매도주문이 완료되었습니다.");
+			refreshMemList();
 		},
 		error:function(data){
            	alert(data.responseJSON.error); // the message

@@ -290,8 +290,8 @@ for i in range(14, -1, -1): # 2주 기준으로 현재가 설정(오늘꺼까지
     #print("day, state : ", d_day_str, d_state[0])
     import datetime
     dt_now = datetime.datetime.now()
-    #stand_time = (dt_now + datetime.timedelta(seconds=5)).strftime('%Y-%m-%d %H:%M:%S')
-    stand_time = (dt_now + datetime.timedelta(minutes=1)).strftime('%Y-%m-%d %H:%M:%S')
+    stand_time = (dt_now + datetime.timedelta(seconds=5)).strftime('%Y-%m-%d %H:%M:%S')
+    #stand_time = (dt_now + datetime.timedelta(minutes=1)).strftime('%Y-%m-%d %H:%M:%S')
     stand_time = datetime.datetime.strptime(stand_time, '%Y-%m-%d %H:%M:%S')
     while True :
         if(True):
