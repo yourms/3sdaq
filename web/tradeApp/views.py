@@ -8,6 +8,7 @@ print("dbURL : " , dbURL)
 
 import sqlite3
 # Create your views here.
+
 def index(request):
     print(">>>> index ")
 
