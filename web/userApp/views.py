@@ -1,7 +1,5 @@
-# 주석
 from django.shortcuts import render , redirect
 from .models          import *
-import schedule
 import time
 import os.path
 import sqlite3
@@ -45,11 +43,12 @@ def login(request) :
             # 세션을 심는 과정
             context['session_user_name'] = request.session['user_name']
             context['session_user_id'] = request.session['user_id']
-            return render(request, 'user/ok.html', context)
+            return redirect('../../bbs/index')
+            #return render(request, 'bbs/index', context)
         except Exception as e:
             context['error'] = 'invalid id, pwd'
             return render(request , 'user/index.html' , context)
-
+'''
 def list(request) :
     create()
     print('>>>> user list')
@@ -82,7 +81,7 @@ def detail(request):
 
     return render(request , 'user/detail.html' , context)
 
-
+'''
 def registerForm(request):
     print('>>>> user registerForm - ')
     return render(request , 'user/join.html')
@@ -99,7 +98,8 @@ def join(request) :
     # return render(request , 'user/index.html')
     return redirect('index')
 
-
+def aboutUs(request):
+    return render(request, 'user/aboutUs.html')
 def logout(request) :
     print(">>>> user logout")
     # 세션을 삭제
