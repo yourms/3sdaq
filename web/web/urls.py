@@ -18,7 +18,7 @@ from django.urls    import path, include
 # from web            import views
 
 urlpatterns = [
-    # path('', views.index, name = 'main'),
+    path('', views.index, name = 'main'),
     path('admin/', admin.site.urls),
     path('trade/', include('tradeApp.urls')),
     path('user/', include('userApp.urls')),
