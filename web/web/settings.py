@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'tradeApp',
     'userApp',
     'bbsApp',
+    'noticeApp',
 ]
 
 MIDDLEWARE = [
