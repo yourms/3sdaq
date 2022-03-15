@@ -23,4 +23,5 @@ urlpatterns = [
     path('trade/', include('tradeApp.urls')),
     path('user/', include('userApp.urls')),
     path('bbs/', include('bbsApp.urls')),
+    path('notice/', include('noticeApp.urls')),
 ]
