@@ -1,15 +1,6 @@
-<<<<<<< HEAD
 from django.apps import AppConfig
 
 
 class BbsappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'bbsApp'
-=======
-from django.apps import AppConfig
-
-
-class BbsappConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'bbsApp'
->>>>>>> origin/master
