@@ -11,7 +11,7 @@
 		#first {
 			display:inline-block;
 			width:60%;
-			height:400px;
+			height:450px;
 			float: left;
 			position: relative;
 			left: 0%;
@@ -19,16 +19,16 @@
 		}
 		#second {
 			display:inline-block;
-			width: 30%;
+			width: 40%;
 			float: left;
 			position: relative;
-			left: 0%;
+			left: 0px;
 		}
 		#three {
 
 			display:inline-block;
 			width:90%;
-			height:400px;
+			height:300px;
 			overflow-y: auto;
 
 		}
@@ -43,20 +43,27 @@
 
 		th{background-color: #f2f2f2;}
 		tr:nth-child(even) {background-color: #f2f2f2;}
-		input{height:60%;}
-
+		input{height:80%;}
     </style>
-	<div id="first" style="margin-top: 30px;height: 300px;" >
+	<style type="text/css">
+		.table > :not(caption) > * > *, .dataTable-table > :not(caption) > * > * {
+		  padding: 0rem 0rem;
+		  background-color: var(--bs-table-bg);
+		  border-bottom-width: 1px;
+		  box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+}
+	</style>
 
+	<div id="first" style="height: 300px;" >
 		<table class="table table-bordered" style="width:100%;">
 			<caption  style = "display:none;">이건테이블이다.</caption>
 			<colgroup>
-				<col width="30%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="20%" />
+				<col width="25%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
 			</colgroup>
 			<thead>
 				<tr>
@@ -80,8 +87,14 @@
 		</table>
 
 	</div>
-	<div id="second" style="margin-top: 30px;">
-		<table class="table table-bordered" style='text-align: center;position: absolute;left: 50px;' align="center">
+
+
+	<div id="second" style="width: 350px;margin-top: 30px;margin-left: 50px;">
+		<table class="table table-bordered" style='text-align: center;position: absolute;left: 0px;' align="center">
+			<colgroup>
+				<col width="50%" />
+				<col width="50%" />
+			</colgroup>
 			<thead>
 				<tr>
 					<th id="sTrade_Form_th1" style="">매수</th><th id="sTrade_Form_th2">매도</th>
@@ -89,25 +102,25 @@
 			</thead>
 			<tbody id="tbody2">
 				<tr>
-					<td width="100" >종목</td>
-					<td width="100" id="sTrade_Form_dname"></td>
+					<td>종목</td>
+					<td id="sTrade_Form_dname"></td>
 				</tr>
 				<tr>
-					<td width="100" >현재가</td>
-					<td width="100" id="sTrade_Form_dprice"></td>
+					<td>현재가</td>
+					<td id="sTrade_Form_dprice"></td>
 				</tr>
 				<tr>
-					<td width="100" id="sTrade_Form_wprice_txt" >매수가</td>
-					<td width="100"><input type="text" id="sTrade_Form_wprice" style="text-align: center;" /></td>
+					<td id="sTrade_Form_wprice_txt" >매수가</td>
+					<td><input type="text" id="sTrade_Form_wprice" style="text-align: center;" /></td>
 				</tr>
 				<tr>
-					<td width="100" >수량</td>
-					<td width="100">
+					<td>수량</td>
+					<td>
 						<input type="text" id="sTrade_Form_dquan" style="text-align: center;" />
 					</td>
 				</tr>
 				<tr>
-					<td width="100" colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
+					<td colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
 						<input type="text" id="sTrade_Form_dcode" value="" style="visibility:hidden;width: 0px;">
 						<input type="text" id="sTrade_Form_gubun" value="" style="visibility:hidden;width: 0px;">
 					</td>
@@ -115,6 +128,7 @@
 			</tbody>
 		</table>
 	</div>
+
 	<div id="three" style="margin-top: 50px;">
 		<table class="table table-bordered" stype="height:300px; width:100%;" align="center">
 			<colgroup>
