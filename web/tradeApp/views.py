@@ -21,7 +21,6 @@ def index(request):
     #     return render(request, 'login.html')
     pass
 
-
 def sTrade_list(request):
     print(">>>> sTrade_list")
     typeST = request.POST.get('typeST', '')
@@ -39,6 +38,7 @@ def sTrade_list(request):
     for value in market_price:
         value['price'] = getComma(value['price'])
         value['d_1price'] = getComma(value['d_1price'])
+        value['sum_tquan'] = getComma(value['sum_tquan'])
         value['change'] = getComma(value['change'])
         value['ch_rate'] = str(value['ch_rate']) + "%"
     for value in myStock_price:
@@ -131,13 +131,26 @@ def query_market_price(d_day):
     # query_txt += " where tradeyn = 'Y'"
     # query_txt += " order by time2 desc)"
     # query_txt += " group by code"
-    query_txt = "select * from "
-    query_txt += " (select A.code, A.name, ifnull(B.price,A.d_1price) as price , A.d_1price, B.quan, (ifnull(B.price,A.d_1price) - A.d_1price) AS change, round(CAST((ifnull(B.price,A.d_1price) - A.d_1price) AS FLOAT)/CAST(A.d_1price AS FLOAT) * 100, 2) as ch_rate"
-    query_txt += " from tradeApp_comp  A"
-    query_txt += " left join tradeApp_order B on(A.code = B.code and B.time2 > (select strftime('%Y-%m-%d', 'now', 'localtime', '"+d_day+"')))"
-    query_txt += " where 1 = 1"
-    query_txt += " order by B.time2 desc)"
-    query_txt += " group by code"
+
+    # query_txt = "select * from "
+    # query_txt += " (select A.code, A.name, ifnull(B.price,A.d_1price) as price , A.d_1price, (ifnull(B.price,A.d_1price) - A.d_1price) AS change, round(CAST((ifnull(B.price,A.d_1price) - A.d_1price) AS FLOAT)/CAST(A.d_1price AS FLOAT) * 100, 2) as ch_rate"
+    # query_txt += " from tradeApp_comp  A"
+    # query_txt += " left join tradeApp_order B on(A.code = B.code and B.time2 > (select strftime('%Y-%m-%d', 'now', 'localtime', '"+d_day+"')))"
+    # query_txt += " where 1 = 1"
+    # query_txt += " order by B.time2 desc)"
+    # query_txt += " group by code"
+
+    query_txt = " select * from"
+    query_txt += " (  select A.code, A.name, ifnull(B.price,A.d_1price) as price , A.d_1price, (ifnull(B.price,A.d_1price) - A.d_1price) AS change,"
+    query_txt += "           round(CAST((ifnull(B.price,A.d_1price) - A.d_1price) AS FLOAT)/CAST(A.d_1price AS FLOAT) * 100, 2) as ch_rate, sum_tquan"
+    query_txt += "    from tradeApp_comp  A"
+    query_txt += "    join (select * , sum(tquan) as sum_tquan"
+    query_txt += "          from (select * from tradeApp_order where tradeyn = 'Y' and time2 > (select strftime('%Y-%m-%d', 'now', 'localtime', '-0 day')) order by time2 desc)"
+    query_txt += "          group by code) B"
+    query_txt += "    on A.code = B.code"
+    query_txt += " )"
+    query_txt += " order by code"
+    print("query_txt : ", query_txt)
     return query_db(query_txt)
 
 def query_myStock_price(user_id):
@@ -430,9 +443,65 @@ def getComma(value):
 #  2022-03-13 00:07
 
 
+def sTrade_charts(request):
+    print(">>>> sTrade_charts")
+    typeST = request.POST.get('typeST', '')
+    user_id = request.POST.get('user_id', '')
 
+    user_id = request.session['user_id']
+    d_day = '-0 day'
+    market_price = query_market_price(d_day)
+    for value in market_price:
+        value['price'] = getComma(value['price'])
+        value['d_1price'] = getComma(value['d_1price'])
+        value['change'] = getComma(value['change'])
+        value['ch_rate'] = str(value['ch_rate']) + "%"
+    print("market_price : ", market_price)
+    context = {
+        'sTrades': market_price,
+    }
+    if(typeST == 'update'):
+        return JsonResponse(context, safe=False)
+    else:
+        return render(request, 'sTrade/charts.html', context)
 
+def sTrade_code_data(request):
+    print(">>>> sTrade_code_data")
+    code = request.POST.get('code', '')
+    print("trCode : ", code);
+    #query_txt = " select *, max(price) as max_price, min(price) as min_price from tradeApp_d_price where code = ?"
+    query_txt = " select A.*, max_price, min_price "
+    query_txt += " from tradeApp_d_price A"
+    query_txt += " left join (select code, max(price) as max_price from tradeApp_d_price where code = ?) B"
+    query_txt += " left join (select code, min(price) as min_price from tradeApp_d_price where code = ?) C"
+    query_txt += " on A.code = B.code "
+    query_txt += " and A.code = C.code"
+    query_txt += " where A.code = ?"
 
+    sTrade_code_data_query = query_db(query_txt, (code, code, code))  # 종목조회 select
+    print("sTrade_code_data_query : ", sTrade_code_data_query)
+    day_list = []
+    price_list = []
+    max_price = []
+    min_price = []
+    name = []
+    for value in sTrade_code_data_query:
+        day_list.append(value['day'])
+        price_list.append(value['price'])
+        max_price.append(value['max_price'])
+        min_price.append(value['min_price'])
+        name.append(value['name'])
+    print("day_list : ", day_list)
+    jsonAry = []
+    jsonAry.append({
+        'day_list': day_list,
+        'price_list': price_list,
+        'max_price': max_price[0],
+        'min_price': min_price[0],
+        'name': name[0],
+    })
+    print(jsonAry)
+    return JsonResponse(jsonAry, safe=False)
 
 
 

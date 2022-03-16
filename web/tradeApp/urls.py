@@ -9,5 +9,8 @@ urlpatterns = [
     path('sTrade_list/', views.sTrade_list, name='sTrade_list'),
     path('detail_order/', views.detail_order, name='detail_order'),
     path('sTrade_trade/', views.sTrade_trade, name='sTrade_trade'),
+    path('sTrade_charts/', views.sTrade_charts, name='sTrade_charts'),
+    path('sTrade_code_data/', views.sTrade_code_data, name='sTrade_code_data'),
+
 
 ]

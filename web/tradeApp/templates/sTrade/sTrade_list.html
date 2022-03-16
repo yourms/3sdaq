@@ -10,25 +10,25 @@
 		}
 		#first {
 			display:inline-block;
-			width:650px;
-			height:620px;
+			width:60%;
+			height:450px;
 			float: left;
 			position: relative;
-			left: 15%;
+			left: 0%;
 			overflow-y: auto;
 		}
 		#second {
 			display:inline-block;
-			width: 300px;
+			width: 40%;
 			float: left;
 			position: relative;
-			left: 15%;
+			left: 0px;
 		}
 		#three {
 
 			display:inline-block;
-			width:1500px;
-			height:620px;
+			width:90%;
+			height:300px;
 			overflow-y: auto;
 
 		}
@@ -43,23 +43,31 @@
 
 		th{background-color: #f2f2f2;}
 		tr:nth-child(even) {background-color: #f2f2f2;}
-		input{height:60%;}
-
+		input{height:80%;}
     </style>
-	<div id="first" style="margin-top: 30px;height: 500px;" >
-		<div style="width:630px;">
-		<table class="" style="width:100%;">
+	<style type="text/css">
+		.table > :not(caption) > * > *, .dataTable-table > :not(caption) > * > * {
+		  padding: 0rem 0rem;
+		  background-color: var(--bs-table-bg);
+		  border-bottom-width: 1px;
+		  box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+}
+	</style>
+
+	<div id="first" style="height: 300px;" >
+		<table class="table table-bordered" style="width:100%;">
 			<caption  style = "display:none;">이건테이블이다.</caption>
 			<colgroup>
-				<col width="30%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="20%" />
-				<col width="20%" />
+				<col width="25%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
 			</colgroup>
 			<thead>
 				<tr>
-					<th>종목</th><th>현재가</th><th>전일가</th><th>전일대비</th><th>변동율</th>
+					<th>종목</th><th>현재가</th><th>전일가</th><th>전일대비</th><th>거래량</th><th>변동율</th>
 				</tr>
 			</thead>
 
@@ -70,16 +78,23 @@
 					<td name="price" id="td_sTrade_price_{{forloop.counter0}}">{{sTrade.price}}</td>
 					<td name="d_1price" id="td_sTrade_d_1price_{{forloop.counter0}}">{{sTrade.d_1price}}</td>
 					<td name="change" id="td_sTrade_change_{{forloop.counter0}}">{{sTrade.change}}</td>
+					<td name="sum_tquan" id="td_sTrade_sum_tquan_{{forloop.counter0}}">{{sTrade.sum_tquan}}</td>
 					<td name="ch_rate" id="td_sTrade_ch_rate_{{forloop.counter0}}">{{sTrade.ch_rate}}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 
 		</table>
-		</div>
+
 	</div>
-	<div id="second" style="margin-top: 30px;">
-		<table class="table table-bordered" style='text-align: center;position: absolute;left: 50px;' align="center">
+
+
+	<div id="second" style="width: 350px;margin-top: 30px;margin-left: 50px;">
+		<table class="table table-bordered" style='text-align: center;position: absolute;left: 0px;' align="center">
+			<colgroup>
+				<col width="50%" />
+				<col width="50%" />
+			</colgroup>
 			<thead>
 				<tr>
 					<th id="sTrade_Form_th1" style="">매수</th><th id="sTrade_Form_th2">매도</th>
@@ -87,25 +102,25 @@
 			</thead>
 			<tbody id="tbody2">
 				<tr>
-					<td width="100" >종목</td>
-					<td width="100" id="sTrade_Form_dname"></td>
+					<td>종목</td>
+					<td id="sTrade_Form_dname"></td>
 				</tr>
 				<tr>
-					<td width="100" >현재가</td>
-					<td width="100" id="sTrade_Form_dprice"></td>
+					<td>현재가</td>
+					<td id="sTrade_Form_dprice"></td>
 				</tr>
 				<tr>
-					<td width="100" id="sTrade_Form_wprice_txt" >매수가</td>
-					<td width="100"><input type="text" id="sTrade_Form_wprice" style="text-align: center;" /></td>
+					<td id="sTrade_Form_wprice_txt" >매수가</td>
+					<td><input type="text" id="sTrade_Form_wprice" style="text-align: center;" /></td>
 				</tr>
 				<tr>
-					<td width="100" >수량</td>
-					<td width="100">
+					<td>수량</td>
+					<td>
 						<input type="text" id="sTrade_Form_dquan" style="text-align: center;" />
 					</td>
 				</tr>
 				<tr>
-					<td width="100" colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
+					<td colspan='2'><button id="bsBtn" type="button" onclick="">매수</button>
 						<input type="text" id="sTrade_Form_dcode" value="" style="visibility:hidden;width: 0px;">
 						<input type="text" id="sTrade_Form_gubun" value="" style="visibility:hidden;width: 0px;">
 					</td>
@@ -113,6 +128,7 @@
 			</tbody>
 		</table>
 	</div>
+
 	<div id="three" style="margin-top: 50px;">
 		<table class="table table-bordered" stype="height:300px; width:100%;" align="center">
 			<colgroup>
@@ -270,6 +286,7 @@ function updatesTrade(){
 				$('#td_sTrade_price_'+idx).text(getComma(data.price));
 				$('#td_sTrade_d_1price_'+idx).text(getComma(data.d_1price));
 				$('#td_sTrade_change_'+idx).text(getComma(data.change));
+				$('#td_sTrade_sum_tquan_'+idx).text(getComma(data.sum_tquan));
 				$('#td_sTrade_ch_rate_'+idx).text(data.ch_rate);
 
 
