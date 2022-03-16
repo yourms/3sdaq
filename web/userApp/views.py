@@ -11,12 +11,7 @@ def index(request) :
     print(">>>>> user index")
     if request.session.get('user_name') :
         print('>>>> login session exits!!')
-        context = {
-            'session_user_name' : request.session['user_name'] ,
-            'session_user_id': request.session['user_id'],
-        }
         return redirect('../../bbs/index')
-        #return render(request, 'user/ok.html' , context)
     else :
         return render(request , 'user/index.html')
 
@@ -41,17 +36,19 @@ def login(request) :
             # 세션을 만드는 과정
             request.session['user_name'] = user.user_name
             request.session['user_id'] = user.user_id
+            request.session['user_pwd'] = user.user_pwd
             # 세션을 심는 과정
             context['session_user_name'] = request.session['user_name']
             context['session_user_id'] = request.session['user_id']
+            context['session_user_pwd'] = request.session['user_pwd']
             return redirect('../../bbs/index')
             #return render(request, 'bbs/index', context)
         except Exception as e:
             context['error'] = 'invalid id, pwd'
             return render(request , 'user/index.html' , context)
-
+'''
 def list(request) :
-    '''
+
     create()
     print('>>>> user list')
     division = request.GET['category']
@@ -61,7 +58,7 @@ def list(request) :
     users = WebUser.objects.all()
     for u in users :
         print('>>>> ' , u.user_name)
-    '''
+
     news = SBS.objects.all()
     for n in news :
         print(n.url)
@@ -70,7 +67,7 @@ def list(request) :
 
 
     return render(request , 'user/list.html' , context)
-'''
+
 def detail(request):
     print('>>>> user detail')
     id = request.GET['id']
@@ -102,11 +99,24 @@ def join(request) :
 
 def aboutUs(request):
     return render(request, 'user/aboutUs.html')
+
+def mypage(request):
+    print(">>>>> user page")
+    if request.session.get('user_name'):
+        print('>>>> Yeah!!')
+        context = {
+            'session_user_name': request.session['user_name'],
+            'session_user_id': request.session['user_id'],
+            'session_user_pwd' : request.session['user_pwd'],
+        }
+    return render(request, 'user/mypage.html', context)
+
 def logout(request) :
     print(">>>> user logout")
     # 세션을 삭제
     request.session['user_name'] = {}
     request.session['user_id'] = {}
+    request.session['user_pwd'] = {}
     request.session.modified = True
 
     # 새로운 request url을 정의할 때
