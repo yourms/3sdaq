@@ -1,25 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% include 'header.html' %}
+<style type="text/css">
+    .form-label{font-size: 20pt ;}
+    .sel{width: 400%}
+    .write{text-align: center; }
+</style>
+{% block content %}
 <body>
-    <form action="../notice_create/" method="post">
-        {% csrf_token %}
-        <div>
-            <label>TITLE</label>
-            <input type="text" name="title" placeholder="제목 입력하세요">
-        </div>
-        <div>
-            <label>WRITER</label>
-            <input type="text" name="writer" placeholder="작성자 입력하세요">
-        </div>
-        <div>
-            <label>CONTENT</label>
-            <textarea name="content" placeholder="Enter..."></textarea>
-        </div>
-        <button type="submit">Submit</button>
-    </form>
+<div id="layoutSidenav_content">
+    <main>
+        <div class="container-fluid px-4">
+            <br>
+            <h1 class="mt-4">글쓰기</h1>
+            <br>
+
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="sel">
+
+                        <form action="../notice_create/" method="post">
+                            {% csrf_token %}
+
+                                <label class="form-label">Title</label>
+                                <div class = "title">
+                                    <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">
+                                </div>
+
+                            <div>
+                                <label class="form-label">Writer</label>
+                                <input type="text" class="form-control" name="writer" placeholder="작성자를 입력하세요">
+                            </div>
+                            <div>
+                                <label class="form-label">Content</label>
+                                <textarea class="form-control" name="content" placeholder="내용을 입력하세요"></textarea>
+                            </div>
+                            <br>
+                            <br>
+                            <div class="write">
+                                <button type="submit" class="btn btn-dark btn-lg" onclick="location.href='../' ">게시판으로</button>
+                                <button type="submit" class="btn btn-dark btn-lg">작성</button>
+                            </div>
+                        </form>
+    </main>
+</div>
+</div>
 </body>
 </html>
+{% endblock %}
