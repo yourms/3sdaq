@@ -105,10 +105,10 @@ def sTrade_trade(request):
 
 
 def query_db(query, args=(), one=False):
-    print(">>>> query_db")
+    #print(">>>> query_db")
     con = sqlite3.connect(dbURL)
     cur = con.cursor()
-    print("args : ", args)
+    #print("args : ", args)
     cur.execute(query, args)
     con.commit()
 
@@ -145,7 +145,7 @@ def query_market_price(d_day):
     query_txt += "           round(CAST((ifnull(B.price,A.d_1price) - A.d_1price) AS FLOAT)/CAST(A.d_1price AS FLOAT) * 100, 2) as ch_rate, sum_tquan"
     query_txt += "    from tradeApp_comp  A"
     query_txt += "    join (select * , sum(tquan) as sum_tquan"
-    query_txt += "          from (select * from tradeApp_order where tradeyn = 'Y' and time2 > (select strftime('%Y-%m-%d', 'now', 'localtime', '-0 day')) order by time2 desc)"
+    query_txt += "          from (select * from tradeApp_order where tradeyn = 'Y' and time2 > (select strftime('%Y-%m-%d', 'now', 'localtime', '"+d_day+"')) order by time2 desc)"
     query_txt += "          group by code) B"
     query_txt += "    on A.code = B.code"
     query_txt += " )"
@@ -503,6 +503,51 @@ def sTrade_code_data(request):
     print(jsonAry)
     return JsonResponse(jsonAry, safe=False)
 
+def sTrade_myAccount(request) :
+    print(">>>> sTrade_myAccount")
+    typeST = request.POST.get('typeST', '')
+    user_id = request.POST.get('user_id', '')
+
+    user_id = request.session['user_id']
+    query_txt = " select user_amt from userApp_webuser where user_id = ?"
+    sTrade_amt_query = query_db(query_txt, (user_id, ))  # 현금조회 select
+    print("## : ", sTrade_amt_query)
+    print("### : ", sTrade_amt_query[0]['user_amt'])
+    
+    
+    d_day = '-0 day'
+    stock_prices = 0
+    myStock_price = query_myStock_price(user_id)
+
+
+    for value in myStock_price:
+        value['d_1price'] = getComma(value['d_1price'])
+        value['price'] = getComma(value['price'])
+        value['change'] = getComma(value['change'])
+        value['myprice'] = getComma(value['myprice'])
+        value['quan'] = getComma(value['quan'])
+        value['income_rate'] = str(value['income_rate']) + "%"
+        print("stock_prices : ", value['t_price'])
+        stock_prices += value['t_price']
+        print("stock_prices : ", stock_prices)
+        value['t_price'] = getComma(value['t_price'])
+    user_amt = int(sTrade_amt_query[0]['user_amt'])
+    tot_asset = stock_prices + user_amt
+    print("stock_prices : ", stock_prices)
+    print("user_amt : ", user_amt)
+    print("tot_asset : ", tot_asset)
+
+    context = {
+        'myTrades': myStock_price,
+        'user_amt': getComma(user_amt),
+        'tot_asset': getComma(tot_asset),
+        'stock_prices': getComma(stock_prices),
+    }
+
+    if (typeST == 'update'):
+        return JsonResponse(context, safe=False)
+    else:
+        return render(request, 'sTrade/myAccount.html', context)
 
 
 
