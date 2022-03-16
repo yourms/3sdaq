@@ -15,7 +15,8 @@ def index(request) :
             'session_user_name' : request.session['user_name'] ,
             'session_user_id': request.session['user_id'],
         }
-        return render(request, 'user/ok.html' , context)
+        return redirect('../../bbs/index')
+        #return render(request, 'user/ok.html' , context)
     else :
         return render(request , 'user/index.html')
 
@@ -48,8 +49,9 @@ def login(request) :
         except Exception as e:
             context['error'] = 'invalid id, pwd'
             return render(request , 'user/index.html' , context)
-'''
+
 def list(request) :
+    '''
     create()
     print('>>>> user list')
     division = request.GET['category']
@@ -59,7 +61,7 @@ def list(request) :
     users = WebUser.objects.all()
     for u in users :
         print('>>>> ' , u.user_name)
-
+    '''
     news = SBS.objects.all()
     for n in news :
         print(n.url)
@@ -68,7 +70,7 @@ def list(request) :
 
 
     return render(request , 'user/list.html' , context)
-
+'''
 def detail(request):
     print('>>>> user detail')
     id = request.GET['id']
