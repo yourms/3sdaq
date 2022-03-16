@@ -11,6 +11,6 @@ class WebUser(models.Model) :
     user_regdate = models.DateTimeField(auto_now=True)
 
 class SBS(models.Model):
-    title = models.TextField(max_length=100)
-    url = models.TextField(max_length=100)
+    title = models.TextField(max_length=1000)
+    url = models.TextField(max_length=1000)
 
