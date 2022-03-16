@@ -11,6 +11,8 @@ urlpatterns = [
     path('join/' ,          views.join),
     path('logout/' ,          views.logout),
     path('aboutUs/',        views.aboutUs),
+    path('aboutUs2/',        views.aboutUs2),
+    path('mypage/',         views.mypage),
 ]
 
 

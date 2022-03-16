@@ -100,6 +100,9 @@ def join(request) :
 def aboutUs(request):
     return render(request, 'user/aboutUs.html')
 
+def aboutUs2(request):
+    return render(request, 'user/aboutUs2.html')
+
 def mypage(request):
     print(">>>>> user page")
     if request.session.get('user_name'):
